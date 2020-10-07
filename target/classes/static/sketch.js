@@ -1,3 +1,5 @@
+import Robot from './objects/Robot.js';
+
 function parseCommand(input = "") {
             return JSON.parse(input);
         }
@@ -61,8 +63,6 @@ function parseCommand(input = "") {
                 //Hier wordt het commando dat vanuit de server wordt gegeven uit elkaar gehaald
                 var command = parseCommand(event.data);
 
-                console.log(event.data);
-
                 //Wanneer het commando is "object_update", dan wordt deze code uitgevoerd. Bekijk ook de servercode om dit goed te begrijpen.
                 if (command.command == "object_update") {
                     //Wanneer het object dat moet worden geupdate nog niet bestaat (komt niet voor in de lijst met worldObjects op de client),
@@ -70,6 +70,9 @@ function parseCommand(input = "") {
                     if (Object.keys(worldObjects).indexOf(command.parameters.uuid) < 0) {
                         //Wanneer het object een robot is, wordt de code hieronder uitgevoerd.
                         if (command.parameters.type == "robot") {
+                            let robot2 = new Robot();
+                            scene.add( robot2.getMesh() );
+
                             var geometry = new THREE.BoxGeometry(0.9, 0.3, 0.9);
                             var cubeMaterials = [
                                 new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_side.png"), side: THREE.DoubleSide }), //LEFT

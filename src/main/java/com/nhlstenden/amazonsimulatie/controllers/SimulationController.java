@@ -66,6 +66,8 @@ public class SimulationController extends Controller {
         for (Object3D object : this.getModel().getWorldObjectsAsList()) {
             view.update(Model.UPDATE_COMMAND, object);
         }
+
+        view.doneInitializing();
     }
 
     /*

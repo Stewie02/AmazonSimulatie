@@ -14,13 +14,13 @@ public class MovableObjectsManager {
     {
         racks = new Rack[4][4];
 
-        double x = 0, y = 0;
+        double x = 0, z = 0;
 
         for (int column = 0; column < racks.length; column++)
         {
             x = 0;
-            if (column % 2 == 0 && column != 0) y += 2.5;
-            else if(column != 0) y += 0.5;
+            if (column % 2 == 0 && column != 0) z += 2.5;
+            else if(column != 0) z += 0.5;
 
 
             for (int row = 0; row < racks[column].length; row++)
@@ -28,17 +28,7 @@ public class MovableObjectsManager {
                 if (row % 2 == 0 && row != 0) x += 2.5;
                 else if(row != 0) x += 0.5;
 
-                racks[column][row] = new Rack(x, y, 0.15);
-            }
-        }
-
-
-        for (MovableObject[] innerRacks : racks)
-        {
-            for (MovableObject rack : innerRacks)
-            {
-                rack = new Rack(0, 0, 0);
-
+                racks[column][row] = new Rack(x, 0.15, z);
             }
         }
     }
