@@ -20,7 +20,7 @@ public class World implements Model {
      * een lijst van Object3D onderdelen. Deze kunnen in principe alles zijn. (Robots, vrachrtwagens, etc)
      */
     private List<Object3D> worldObjects;
-
+    private MovableObjectsManager movableObjectsManager;
     /*
      * Dit onderdeel is nodig om veranderingen in het model te kunnen doorgeven aan de controller.
      * Het systeem werkt al as-is, dus dit hoeft niet aangepast te worden.
@@ -33,6 +33,7 @@ public class World implements Model {
      */
     public World() {
         this.worldObjects = new ArrayList<>();
+        movableObjectsManager = new MovableObjectsManager();
 
         // 0.9
         int x = 0;
@@ -84,6 +85,7 @@ public class World implements Model {
         for(Object3D object : this.worldObjects) {
             returnList.add(new ProxyObject3D(object));
         }
+        returnList.addAll(movableObjectsManager.getMovableObjectsAsList());
 
         return returnList;
     }

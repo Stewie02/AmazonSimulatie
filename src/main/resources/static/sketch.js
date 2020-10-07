@@ -61,6 +61,8 @@ function parseCommand(input = "") {
                 //Hier wordt het commando dat vanuit de server wordt gegeven uit elkaar gehaald
                 var command = parseCommand(event.data);
 
+                console.log(event.data);
+
                 //Wanneer het commando is "object_update", dan wordt deze code uitgevoerd. Bekijk ook de servercode om dit goed te begrijpen.
                 if (command.command == "object_update") {
                     //Wanneer het object dat moet worden geupdate nog niet bestaat (komt niet voor in de lijst met worldObjects op de client),

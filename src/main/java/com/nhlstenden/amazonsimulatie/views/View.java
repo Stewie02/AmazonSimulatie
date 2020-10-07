@@ -9,5 +9,6 @@ import com.nhlstenden.amazonsimulatie.models.Object3D;
  */
 public interface View {
     void update(String event, Object3D data);
+    void doneInitializing();
     void onViewClose(Command command);
 }

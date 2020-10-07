@@ -1,5 +1,7 @@
 package com.nhlstenden.amazonsimulatie.models;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /*
@@ -7,22 +9,15 @@ import java.util.UUID;
  * 3D object is. Ook implementeerd deze class de interface Updatable. Dit is omdat
  * een robot geupdate kan worden binnen de 3D wereld om zich zo voort te bewegen.
  */
-class Robot implements Object3D, Updatable {
+class Robot extends MovableObject implements Object3D {
     private UUID uuid;
 
-    private double x = 0;
-    private double y = 0;
-    private double z = 0;
+    List<Position> positionsToVisit = new ArrayList<>();
 
-    private double rotationX = 0;
-    private double rotationY = 0;
-    private double rotationZ = 0;
 
     public Robot(double x, double y, double z) {
+        super(x, y, z);
         this.uuid = UUID.randomUUID();
-        this.x = x;
-        this.y = y;
-        this.z = z;
     }
 
     /*
@@ -38,18 +33,22 @@ class Robot implements Object3D, Updatable {
      * (Omdat de informatie niet veranderd is, is deze dus ook nog steeds hetzelfde als
      * in de view)
      */
-    @Override
-    public boolean update() {
+    public boolean update()
+    {
+        if (positionsToVisit.isEmpty() && x == y && y == z && z == 0) return false;
 
-        this.z += 0.5;
+        // Here happens the movement of the robot
+
+        x += 0.5;
+
         return true;
-
     }
 
-    @Override
-    public String getUUID() {
-        return this.uuid.toString();
+    public void goToPosition(ArrayList<Position> goToPositions)
+    {
+        positionsToVisit.addAll(goToPositions);
     }
+
 
     @Override
     public String getType() {
@@ -61,34 +60,10 @@ class Robot implements Object3D, Updatable {
          */
         return Robot.class.getSimpleName().toLowerCase();
     }
-
-    @Override
-    public double getX() {
-        return this.x;
-    }
-
-    @Override
-    public double getY() {
-        return this.y;
-    }
-
-    @Override
-    public double getZ() {
-        return this.z;
-    }
-
-    @Override
-    public double getRotationX() {
-        return this.rotationX;
-    }
-
-    @Override
-    public double getRotationY() {
-        return this.rotationY;
-    }
-
-    @Override
-    public double getRotationZ() {
-        return this.rotationZ;
-    }
 }
+
+
+class Position {
+
+}
+
