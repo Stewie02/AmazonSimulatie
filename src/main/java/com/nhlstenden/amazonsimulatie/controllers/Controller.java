@@ -18,7 +18,7 @@ import com.nhlstenden.amazonsimulatie.views.View;
  */
 public abstract class Controller implements Runnable, PropertyChangeListener {
     private List<View> views;
-    private Model model;
+    protected Model model;
 
     public Controller(Model model) {
         this(model, new ArrayList<View>());
