@@ -2,7 +2,7 @@ import Object from './Object.js';
 
 export default class MovableObject extends Object{
     constructor(mesh) {
-        super(mesh);
+        super(mesh)
     }
 
     moveTo = (x, y, z) => {
@@ -16,7 +16,11 @@ export default class MovableObject extends Object{
     }
 
     rotate = (x, y, z) => {
-        this.mesh.rotation.set(x, y, z);
+        this.mesh.rotation.set(
+            x * Math.PI / 180, 
+            y * Math.PI / 180, 
+            z * Math.PI / 180
+        );
     }
 
     incrementalRotation = (x, y, z) => {

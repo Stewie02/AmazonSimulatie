@@ -2,6 +2,9 @@ package com.nhlstenden.amazonsimulatie.views;
 
 import com.nhlstenden.amazonsimulatie.base.Command;
 import com.nhlstenden.amazonsimulatie.models.Object3D;
+import com.nhlstenden.amazonsimulatie.models.RackPosition;
+
+import java.util.List;
 
 /*
  * Deze interface is de beschrijving van een view binnen het systeem.
@@ -9,6 +12,6 @@ import com.nhlstenden.amazonsimulatie.models.Object3D;
  */
 public interface View {
     void update(String event, Object3D data);
-    void doneInitializing();
+    void sendRackPositions(List<RackPosition> rackPositions);
     void onViewClose(Command command);
 }

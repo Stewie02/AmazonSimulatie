@@ -15,7 +15,8 @@ public interface Model {
      * Hier is zo'n commando weergegeven als statische waarde, omdat deze gelijk
      * is voor alle models.
      */
-    static final String UPDATE_COMMAND = "object_update";
+    static final String UPDATE_COMMAND = "update";
+    static final String BUILD_COMMAND = "build";
 
     /*
      * Alle models moeten kunnen updaten en een observer kunnen toevoegen.
@@ -25,4 +26,5 @@ public interface Model {
     void update();
     void addObserver(PropertyChangeListener pcl);
     List<Object3D> getWorldObjectsAsList();
+    List<RackPosition> getRackPositions();
 }

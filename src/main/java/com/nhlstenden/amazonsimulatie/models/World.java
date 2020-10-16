@@ -19,8 +19,8 @@ public class World implements Model {
      * Deze objecten moeten uiteindelijk ook in de lijst passen (overerving). Daarom is dit
      * een lijst van Object3D onderdelen. Deze kunnen in principe alles zijn. (Robots, vrachrtwagens, etc)
      */
-    private List<Object3D> worldObjects;
-    private MovableObjectsManager movableObjectsManager;
+    private final List<Object3D> worldObjects;
+    private final MovableObjectsManager movableObjectsManager;
     /*
      * Dit onderdeel is nodig om veranderingen in het model te kunnen doorgeven aan de controller.
      * Het systeem werkt al as-is, dus dit hoeft niet aangepast te worden.
@@ -34,15 +34,6 @@ public class World implements Model {
     public World() {
         this.worldObjects = new ArrayList<>();
         movableObjectsManager = new MovableObjectsManager();
-
-        // 0.9
-        int x = 0;
-        for (int i = 0; i < 5; i++)
-        {
-            this.worldObjects.add(new Robot(x, 0, 0.15));
-            x += 2.2;
-        }
-//        this.worldObjects.add(new Robot(0, 0, 0.15));
     }
 
     /*
@@ -56,13 +47,18 @@ public class World implements Model {
      */
     @Override
     public void update() {
-        for (Object3D object : this.worldObjects) {
-            if(object instanceof Updatable) {
-                if (((Updatable)object).update()) {
-                    pcs.firePropertyChange(Model.UPDATE_COMMAND, null, new ProxyObject3D(object));
-                }
-            }
+        List<Object3D> changedObjects = this.movableObjectsManager.update();
+        for (Object3D object : changedObjects)
+        {
+            pcs.firePropertyChange(Model.UPDATE_COMMAND, null, object);
         }
+//        for (Object3D object : this.worldObjects) {
+//            if(object instanceof Updatable) {
+//                if (((Updatable)object).update()) {
+//                    pcs.firePropertyChange(Model.UPDATE_COMMAND, null, new ProxyObject3D(object));
+//                }
+//            }
+//        }
     }
 
     /*
@@ -80,13 +76,10 @@ public class World implements Model {
      */
     @Override
     public List<Object3D> getWorldObjectsAsList() {
-        ArrayList<Object3D> returnList = new ArrayList<>();
+        return movableObjectsManager.getMovableObjectsAsList();
+    }
 
-        for(Object3D object : this.worldObjects) {
-            returnList.add(new ProxyObject3D(object));
-        }
-        returnList.addAll(movableObjectsManager.getMovableObjectsAsList());
-
-        return returnList;
+    public List<RackPosition> getRackPositions() {
+        return movableObjectsManager.getRackPositions();
     }
 }

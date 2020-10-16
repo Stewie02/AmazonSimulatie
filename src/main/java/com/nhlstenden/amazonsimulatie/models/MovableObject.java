@@ -6,15 +6,12 @@ import java.util.UUID;
 
 public abstract class MovableObject implements Updatable {
 
-    protected double x, y, z;
+    protected Position position;
     protected double rotationX, rotationY, rotationZ;
-    protected double xSpeed, ySpeed, zSpeed;
     private UUID uuid;
 
     public MovableObject(double x, double y, double z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        position = new Position(x, y, z);
 
         this.uuid = UUID.randomUUID();
     }
@@ -26,15 +23,15 @@ public abstract class MovableObject implements Updatable {
     public abstract boolean update();
 
     public double getX() {
-        return this.x;
+        return this.position.getX();
     }
 
     public double getY() {
-        return this.y;
+        return this.position.getY();
     }
 
     public double getZ() {
-        return this.z;
+        return this.position.getZ();
     }
 
     public double getRotationX() {

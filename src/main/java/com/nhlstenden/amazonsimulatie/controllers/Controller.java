@@ -17,7 +17,7 @@ import com.nhlstenden.amazonsimulatie.views.View;
  * methode, kun je later zelf nog invullen door verder te bouwen op deze class.
  */
 public abstract class Controller implements Runnable, PropertyChangeListener {
-    private List<View> views;
+    private final List<View> views;
     protected Model model;
 
     public Controller(Model model) {
@@ -30,9 +30,15 @@ public abstract class Controller implements Runnable, PropertyChangeListener {
         this.views = new ArrayList<>(views);
     }
 
+    /**
+     * First the new view execute the onViewAdded function
+     * This is because we can send the initialisation data so the client can build the world
+     * After this we'll add the view to the views to send the new data
+     * @param view
+     */
     public void addView(View view) {
-        this.views.add(view);
         this.onViewAdded(view);
+        this.views.add(view);
     }
 
     /*
@@ -65,7 +71,7 @@ public abstract class Controller implements Runnable, PropertyChangeListener {
      * Method to start the controller in a new thread.
      */
     public final void start() {
-        new Thread(this).start();;
+        new Thread(this).start();
     }
 
     public abstract void run();

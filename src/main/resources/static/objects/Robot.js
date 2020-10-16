@@ -2,7 +2,7 @@ import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threej
 import MovableObject from './super/MovableObject.js';
 
 export default class Robot extends MovableObject{
-    constructor() {
+    constructor(uuid) {
         const geometry = new THREE.BoxGeometry(0.9, 0.3, 0.9);
         const cubeMaterials = [
             new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_side.png"), side: THREE.DoubleSide }), //LEFT
@@ -15,7 +15,22 @@ export default class Robot extends MovableObject{
         const material = new THREE.MeshFaceMaterial(cubeMaterials);
         let mesh = new THREE.Mesh(geometry, material);
         mesh.position.y = 0.15;
-        super(mesh);
+
+        let group = new THREE.Group();
+        group.add(mesh);
+        group.uuid = uuid
+
+        super(group);
+    }
+
+    pickUp(object) {
+        this.mesh.add(object)
+    }
+
+    dropOf(object, scene) {
+        object.position.set(this.mesh.position);
+        scene.add(object);
+        this.mesh.remove(object);
     }
 
 }

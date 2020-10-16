@@ -1,8 +1,6 @@
 package com.nhlstenden.amazonsimulatie.models;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /*
  * Deze class stelt een robot voor. Hij impelementeerd de class Object3D, omdat het ook een
@@ -10,14 +8,17 @@ import java.util.UUID;
  * een robot geupdate kan worden binnen de 3D wereld om zich zo voort te bewegen.
  */
 class Robot extends MovableObject implements Object3D {
-    private UUID uuid;
+    private Rack pickedUpRack = null;
 
-    List<Position> positionsToVisit = new ArrayList<>();
-
+    private Queue<Position> positionsToVisit = new LinkedList<>();
 
     public Robot(double x, double y, double z) {
         super(x, y, z);
-        this.uuid = UUID.randomUUID();
+    }
+
+    public Robot(double x, double y, double z, Rack pickedUpRack) {
+        super(x, y, z);
+        this.pickedUpRack = pickedUpRack;
     }
 
     /*
@@ -35,16 +36,50 @@ class Robot extends MovableObject implements Object3D {
      */
     public boolean update()
     {
-        if (positionsToVisit.isEmpty() && x == y && y == z && z == 0) return false;
+        // Speed of robot is 0.2
+        if (positionsToVisit.isEmpty()) return false;
 
         // Here happens the movement of the robot
+        Position goToPosition = positionsToVisit.peek();
 
-        x += 0.5;
+        double differenceX = goToPosition.x - position.x;
+        double differenceY = goToPosition.y - position.y;
+        double differenceZ = goToPosition.z - position.z;
 
+        position.x += positionDifference(differenceX);
+        position.y += positionDifference(differenceY);
+        position.z += positionDifference(differenceZ);
+
+        if (goToPosition.x == position.x && goToPosition.y == position.y && goToPosition.z == position.z) positionsToVisit.poll();
         return true;
     }
 
-    public void goToPosition(ArrayList<Position> goToPositions)
+    private double positionDifference(double dif)
+    {
+        if (dif > 0) return 0.2;
+        if (dif < 0) return -0.2;
+        return 0;
+    }
+
+    public void pickUpRack(Rack rack)
+    {
+        rack.setPosition(position.x, position.y, position.z);
+        this.pickedUpRack = rack;
+
+    }
+
+    public Rack getPickedUpRack() {
+        return this.pickedUpRack;
+    }
+
+    public Rack dropOffRack()
+    {
+        Rack r = this.pickedUpRack;
+        this.pickedUpRack = null;
+        return r;
+    }
+
+    public void goToPosition(List<Position> goToPositions)
     {
         positionsToVisit.addAll(goToPositions);
     }
@@ -61,9 +96,3 @@ class Robot extends MovableObject implements Object3D {
         return Robot.class.getSimpleName().toLowerCase();
     }
 }
-
-
-class Position {
-
-}
-

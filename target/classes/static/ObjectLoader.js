@@ -2,8 +2,10 @@ import {OBJLoader2} from 'https://threejsfundamentals.org/threejs/resources/thre
 import {GLTFLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r119/examples/jsm/loaders/GLTFLoader.js';
 import {MTLLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r119/examples/jsm/loaders/MTLLoader.js';
 import {MtlObjBridge} from 'https://threejsfundamentals.org/threejs/resources/threejs/r119/examples/jsm/loaders/obj2/bridge/MtlObjBridge.js';
+import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r119/build/three.module.js';
 
 function loadOBJMTL( pathObj, pathMtl ) {
+    console.log(pathObj)
     return new Promise(function(resolve){
         const mtlLoader = new MTLLoader();
         mtlLoader.load(pathMtl, (mtlParseResult) => {

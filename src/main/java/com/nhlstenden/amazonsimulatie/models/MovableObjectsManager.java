@@ -1,58 +1,108 @@
 package com.nhlstenden.amazonsimulatie.models;
 
+import com.nhlstenden.amazonsimulatie.models.PathFinding.Dijkstra;
+import com.nhlstenden.amazonsimulatie.models.PathFinding.Node;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class MovableObjectsManager {
 
-    private MovableObject[][] racks;
-    private MovableObject[] robots;
-
+    private final RackPosition[][] rackPositions;
+    private final Robot[] robots;
+    private final Truck truck;
+    private final List<Node> nodeList;
+    private final Dijkstra dijkstra = new Dijkstra();
 
     public MovableObjectsManager()
     {
-        racks = new Rack[4][4];
+        robots = new Robot[2];
+        fillRobotArray();
 
-        double x = 0, z = 0;
+        rackPositions = new RackPosition[8][8];
+        fillRackPositionArray();
 
-        for (int column = 0; column < racks.length; column++)
-        {
-            x = 0;
-            if (column % 2 == 0 && column != 0) z += 2.5;
-            else if(column != 0) z += 0.5;
+        nodeList = new ArrayList<>();
+        createNodes();
 
-
-            for (int row = 0; row < racks[column].length; row++)
-            {
-                if (row % 2 == 0 && row != 0) x += 2.5;
-                else if(row != 0) x += 0.5;
-
-                racks[column][row] = new Rack(x, 0.15, z);
-            }
-        }
+        truck = new Truck(2, -1.55, -7.1);
     }
 
     // TODO: Add the truck
     public List<Object3D> getMovableObjectsAsList()
     {
-//        List<MovableObject> allObjects = new ArrayList<>(Arrays.asList(robots));
-        List<Object3D> allObjects = new ArrayList<Object3D>();
+        List<Object3D> allObjects = new ArrayList<>();
 
-//        for (MovableObject robot : robots)
-//        {
-//            allObjects.add(new ProxyObject3D((Object3D) robot));
-//        }
+        for (MovableObject robot : robots)
+            allObjects.add(new ProxyObject3D((Object3D) robot));
 
-        for (MovableObject[] r : racks)
+        allObjects.add(new ProxyObject3D(truck));
+        return allObjects;
+    }
+
+    public List<RackPosition> getRackPositions()
+    {
+        List<RackPosition> rackPositionsList = new ArrayList<>();
+        for (RackPosition[] innerRackPositions : rackPositions)
+            rackPositionsList.addAll(Arrays.asList(innerRackPositions));
+        return rackPositionsList;
+    }
+
+    public List<Object3D> update()
+    {
+        List<Object3D> changedObjects = new ArrayList<>();
+        for (MovableObject robot : robots)
         {
-            for (MovableObject rack : r)
-            {
-                allObjects.add(new ProxyObject3D((Object3D) rack));
-            }
+            if (robot.update())
+                changedObjects.add(new ProxyObject3D((Object3D)robot));
+        }
+        return changedObjects;
+    }
+
+
+    private void fillRobotArray()
+    {
+        for (int i = 0; i < robots.length; i++) {
+            robots[i] = new Robot(i * 1.5, 0, 0);
         }
 
-        return allObjects;
+        List<Position> pos1 = new ArrayList<>();
+        List<Position> pos2 = new ArrayList<>();
+        pos1.add(new Position(100, 0, 0));
+        pos2.add(new Position(0, 100, 0));
+        robots[0].goToPosition(pos2);
+        robots[1].goToPosition(pos1);
+    }
+
+    private void fillRackPositionArray()
+    {
+        double x, z = 0;
+        for (int column = 0; column < rackPositions.length; column++)
+        {
+            x = 0;
+            if (column % 2 == 0 && column != 0) z += 2.4;
+            else if(column != 0) z += 1.2;
+
+            for (int row = 0; row < rackPositions[column].length; row++)
+            {
+                if (row % 2 == 0 && row != 0) x += 2.4;
+                else if(row != 0) x += 1.2;
+
+                Rack r = null;
+                int rand = new Random().nextInt(100);
+                if (rand < 80) r = new Rack(x, 0, z);
+
+                rackPositions[column][row] = new RackPosition(x, 0.01, z, r);
+            }
+        }
+    }
+
+    private void createNodes()
+    {
+        // TODO: implementation functionality
+
     }
 
 

@@ -58,16 +58,16 @@ public class SimulationController extends Controller {
             }
         });
 
+        view.sendRackPositions(this.getModel().getRackPositions());
+
         /*
          * Dit stukje code zorgt ervoor dat wanneer een nieuwe view verbinding maakt, deze view één
          * keer alle objecten krijgt toegestuurd, ook als deze objecten niet updaten. Zo voorkom je
          * dat de view alleen objecten ziet die worden geupdate (bijvoorbeeld bewegen).
          */
         for (Object3D object : this.getModel().getWorldObjectsAsList()) {
-            view.update(Model.UPDATE_COMMAND, object);
+            view.update(Model.BUILD_COMMAND, object);
         }
-
-        view.doneInitializing();
     }
 
     /*

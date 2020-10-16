@@ -6,9 +6,12 @@ export default class Rack extends MovableObject {
         super()
     }
     
-    async loadObject() {
+    async loadObject(uuid) {
         let mesh = await loadGLTF('objects/imported/Rack/server_rack/scene.gltf');
         mesh.position.set(0, 1.3, 0);
+        mesh.uuid = uuid;
+        console.log(mesh)
+        mesh.castShadow = true;
         this.mesh = mesh;
         return this.mesh;
     }

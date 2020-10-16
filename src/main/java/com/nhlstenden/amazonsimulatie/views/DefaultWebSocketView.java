@@ -1,10 +1,13 @@
 package com.nhlstenden.amazonsimulatie.views;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.nhlstenden.amazonsimulatie.base.Command;
 import com.nhlstenden.amazonsimulatie.models.Object3D;
 
+import com.nhlstenden.amazonsimulatie.models.Position;
+import com.nhlstenden.amazonsimulatie.models.RackPosition;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -32,17 +35,38 @@ public class DefaultWebSocketView implements View {
      */
     @Override
     public void update(String event, Object3D data) {
+        System.out.println("X: " + data.getX() + "    Y: " + data.getY() + "    Z: " + data.getZ() + "    UUID: " + data.getUUID());
         sendMessage("{"
                 + surroundString("command") + ": " + surroundString(event) + ","
                 + surroundString("parameters") + ": " + jsonifyObject3D(data)
                 + "}");
     }
 
-    @Override
-    public void doneInitializing(){
-        sendMessage("{"
-                + surroundString("command") + ": " + surroundString("done_init")
-                + "}");
+    public void sendRackPositions(List<RackPosition> rackPositions)
+    {
+        int amountOfPositions = rackPositions.size();
+
+        StringBuilder stringBuilder = new StringBuilder("{"
+                + surroundString("command") + ": " + surroundString("rack_positions") + ","
+                + surroundString("parameters") + ": " + "[");
+        for (int i = 0; i < amountOfPositions; i++)
+        {
+            RackPosition rackPosition = rackPositions.get(i);
+
+            String rackUUID = "null";
+            if (rackPosition.getRack() != null) rackUUID = rackPosition.getRack().getUUID();
+
+            stringBuilder.append("{");
+            stringBuilder.append(surroundString("uuid")).append(": ").append(surroundString(rackPosition.getUUID())).append(",");
+            stringBuilder.append(surroundString("x")).append(": ").append(surroundString(Double.toString(rackPosition.getPosition().getX()))).append(",");
+            stringBuilder.append(surroundString("y")).append(": ").append(surroundString(Double.toString(rackPosition.getPosition().getY()))).append(",");
+            stringBuilder.append(surroundString("z")).append(": ").append(surroundString(Double.toString(rackPosition.getPosition().getZ()))).append(",");
+            stringBuilder.append(surroundString("rack")).append(": ").append(surroundString(rackUUID)).append("}");
+            if (i + 1 == amountOfPositions) stringBuilder.append("]");
+            else stringBuilder.append(",");
+        }
+        stringBuilder.append("}");
+        sendMessage(stringBuilder.toString());
     }
 
     @Override

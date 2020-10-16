@@ -1,20 +1,30 @@
 package com.nhlstenden.amazonsimulatie.models;
 
+import java.util.UUID;
+
 // size 1 5 1
-public class Rack extends MovableObject implements Object3D {
+public class Rack {
+
+    private UUID uuid;
+    private final Position position;
 
     public Rack(double x, double y, double z)
     {
-        super(x, y, z);
+        position = new Position(x, y, z);
+        this.uuid = UUID.randomUUID();
     }
 
-    @Override
-    public boolean update() {
-        return false;
+    public Position getPosition() {
+        return position;
     }
 
-    @Override
-    public String getType() {
-        return Rack.class.getSimpleName().toLowerCase();
+    public void setPosition(double x, double y, double z)
+    {
+        this.position.set(x, y, z);
+    }
+
+    public String getUUID()
+    {
+        return this.uuid.toString();
     }
 }
