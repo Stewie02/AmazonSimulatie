@@ -28,7 +28,18 @@ public class Dijkstra {
         return min_node;
     }
 
-    public List<Position> giveShortestPath(Node startNode, Node finalNode) {
+    public List<Position> giveShortestPath(Position startNodePosition, Node finalNode) {
+
+        Node startNode = nodeList.get(0);
+
+        for (Node node : nodeList)
+        {
+            if (node.getPosition() == startNodePosition) {
+                startNode = node;
+                break;
+            }
+
+        }
 
         int amountOfNodes = nodeList.size();
 
@@ -66,12 +77,12 @@ public class Dijkstra {
             }
         }
 
-        List<Position> path = new ArrayList<>();;
-        System.out.println("Hahahahah" + paths.get(finalNode));
-        for (Node node : paths.get(finalNode))
-            path.add(node.getPosition());
+        List<Position> pathToFinish = new ArrayList<>();;
 
-        return path;
+        for (Node node : paths.get(finalNode))
+            pathToFinish.add(node.getPosition());
+
+        return pathToFinish;
     }
 
     public List<Node> getNodes()

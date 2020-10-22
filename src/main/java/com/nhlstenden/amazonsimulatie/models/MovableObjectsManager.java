@@ -22,16 +22,8 @@ public class MovableObjectsManager {
 
         dijkstra = new Dijkstra(NodeListCreator.createNodeList(rackPositions));
 
-        List<Position> path = dijkstra.giveShortestPath(dijkstra.getNodes().get(0), dijkstra.getNodes().get(new Random().nextInt(dijkstra.getNodes().size())));
-
-        for (Position p : path)
-        {
-            System.out.println("X: " + p.getX() + "Z: " + p.getZ());
-        }
-
         robots = new Robot[1];
         fillRobotArray();
-        robots[0].goToPosition(path);
 
         truck = new Truck(2, -1.55, -7);
     }
@@ -64,7 +56,7 @@ public class MovableObjectsManager {
                 changedObjects.add(new ProxyObject3D((Object3D)object));
             if (object instanceof Robot)
                 if (((Robot) object).hasReachedPosition())
-                    ((Robot) object).goToPosition(dijkstra.giveShortestPath(dijkstra.getNodes().get(0), dijkstra.getNodes().get(new Random().nextInt(dijkstra.getNodes().size()))));
+                    ((Robot) object).goToPosition(dijkstra.giveShortestPath(((Robot) object).getLatestNodePosition(), dijkstra.getNodes().get(new Random().nextInt(dijkstra.getNodes().size()))));
         }
         if (truck.update())
             changedObjects.add(new ProxyObject3D((Object3D)truck));

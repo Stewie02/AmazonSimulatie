@@ -11,6 +11,7 @@ class Robot extends MovableObject implements Object3D, CanHoldRacks {
     private Rack pickedUpRack = null;
 
     private Queue<Position> positionsToVisit = new LinkedList<>();
+    private Position latestNodePosition;
 
     public Robot(double x, double y, double z) {
         super(x, y, z);
@@ -55,7 +56,9 @@ class Robot extends MovableObject implements Object3D, CanHoldRacks {
         position.y += positionDifference(differenceY);
         position.z += positionDifference(differenceZ);
 
-        if (goToPosition.x == position.x && goToPosition.y == position.y && goToPosition.z == position.z) positionsToVisit.poll();
+        if (goToPosition.x == position.x && goToPosition.y == position.y && goToPosition.z == position.z) {
+            latestNodePosition = positionsToVisit.poll();
+        }
         return true;
     }
 
@@ -92,6 +95,10 @@ class Robot extends MovableObject implements Object3D, CanHoldRacks {
 
     public boolean hasReachedPosition() {
         return positionsToVisit.isEmpty();
+    }
+
+    public Position getLatestNodePosition() {
+        return latestNodePosition;
     }
 
     public Rack getRack() {
