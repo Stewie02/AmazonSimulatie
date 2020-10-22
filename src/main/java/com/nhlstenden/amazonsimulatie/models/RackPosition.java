@@ -2,7 +2,7 @@ package com.nhlstenden.amazonsimulatie.models;
 
 import java.util.UUID;
 
-public class RackPosition {
+public class RackPosition implements CanHoldRacks, HasPosition {
 
     private final Position position;
     private Rack rack = null;

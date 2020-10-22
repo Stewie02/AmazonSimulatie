@@ -1,5 +1,7 @@
 package com.nhlstenden.amazonsimulatie.models;
 
+import com.nhlstenden.amazonsimulatie.models.PathFinding.Node;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ public class World implements Model {
      */
     public World() {
         this.worldObjects = new ArrayList<>();
-        movableObjectsManager = new MovableObjectsManager();
+        this.movableObjectsManager = new MovableObjectsManager();
     }
 
     /*
@@ -81,5 +83,9 @@ public class World implements Model {
 
     public List<RackPosition> getRackPositions() {
         return movableObjectsManager.getRackPositions();
+    }
+
+    public List<Node> getNodes() {
+        return movableObjectsManager.getNodes();
     }
 }

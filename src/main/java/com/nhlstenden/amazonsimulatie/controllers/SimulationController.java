@@ -5,6 +5,7 @@ import java.beans.PropertyChangeEvent;
 import com.nhlstenden.amazonsimulatie.base.Command;
 import com.nhlstenden.amazonsimulatie.models.Model;
 import com.nhlstenden.amazonsimulatie.models.Object3D;
+import com.nhlstenden.amazonsimulatie.models.PathFinding.Node;
 import com.nhlstenden.amazonsimulatie.views.View;
 
 /*
@@ -59,6 +60,11 @@ public class SimulationController extends Controller {
         });
 
         view.sendRackPositions(this.getModel().getRackPositions());
+
+        for (Node node : this.getModel().getNodes())
+        {
+            view.sendNode("node", node);
+        }
 
         /*
          * Dit stukje code zorgt ervoor dat wanneer een nieuwe view verbinding maakt, deze view één

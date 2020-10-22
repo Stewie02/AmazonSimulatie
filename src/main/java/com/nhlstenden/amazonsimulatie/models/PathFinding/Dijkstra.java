@@ -1,11 +1,20 @@
 package com.nhlstenden.amazonsimulatie.models.PathFinding;
 
+import com.nhlstenden.amazonsimulatie.models.Position;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Dijkstra {
+
+    private final List<Node> nodeList;
+
+    public Dijkstra(List<Node> n)
+    {
+        this.nodeList = n;
+    }
 
     private Node minDistance(Map<Node, Integer> dist, Map<Node, Boolean> sptSet, List<Node> nodeList) {
         int min = Integer.MAX_VALUE;
@@ -19,12 +28,15 @@ public class Dijkstra {
         return min_node;
     }
 
-    public List<Node> giveShortestPath(List<Node> nodeList, Node startNode, Node finalNode) {
+    public List<Position> giveShortestPath(Node startNode, Node finalNode) {
 
-        int amountOfVertices = nodeList.size();
+        int amountOfNodes = nodeList.size();
 
+        // Distance from start
         Map<Node, Integer> dist = new HashMap<>();
+        // Hebben we deze al geprobeerd
         Map<Node, Boolean> sptSet = new HashMap<>();
+        // Per node het pad vanaf het startpunt.
         Map<Node, List<Node>> paths = new HashMap<>();
 
         for (Node n : nodeList) {
@@ -35,20 +47,35 @@ public class Dijkstra {
 
         dist.replace(startNode, 0);
 
-        for (int count = 0; count < amountOfVertices - 1; count++) {
+        for (int count = 0; count < amountOfNodes - 1; count++) {
 
             Node u = minDistance(dist, sptSet, nodeList);
             sptSet.replace(u, true);
 
-            for (Node node : nodeList)
-                if (!sptSet.get(node) && u.isConnectedTo(node) && dist.get(u) != Integer.MAX_VALUE && dist.get(u) + 1 < dist.get(node))
-                {
+            for (Node node : nodeList) {
+
+                // We lopen door alle nodes heen.
+                // Kijken welke nodes geconnect zijn met u, is de afstand van u naar een willekeurig kleiner dan de huidige afstand updaten
+                if (!sptSet.get(node) && u.isConnectedTo(node) && dist.get(u) != Integer.MAX_VALUE && dist.get(u) + 1 < dist.get(node)) {
+                    System.out.println("Fastahh");
                     dist.replace(node, dist.get(u) + 1);
                     List<Node> path = new ArrayList<>(paths.get(u));
                     path.add(node);
                     paths.replace(node, path);
                 }
+            }
         }
-        return paths.get(finalNode);
+
+        List<Position> path = new ArrayList<>();;
+        System.out.println("Hahahahah" + paths.get(finalNode));
+        for (Node node : paths.get(finalNode))
+            path.add(node.getPosition());
+
+        return path;
+    }
+
+    public List<Node> getNodes()
+    {
+        return this.nodeList;
     }
 }

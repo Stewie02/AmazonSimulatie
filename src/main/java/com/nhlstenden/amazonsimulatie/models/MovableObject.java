@@ -16,6 +16,12 @@ public abstract class MovableObject implements Updatable {
         this.uuid = UUID.randomUUID();
     }
 
+    public MovableObject(Position pos) {
+        position = new Position(pos.getX(), pos.getY(), pos.getZ());
+
+        this.uuid = UUID.randomUUID();
+    }
+
     public String getUUID() {
         return this.uuid.toString();
     }

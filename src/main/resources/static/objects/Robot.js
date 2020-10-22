@@ -2,17 +2,9 @@ import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threej
 import MovableObject from './super/MovableObject.js';
 
 export default class Robot extends MovableObject{
-    constructor(uuid) {
+    constructor(uuid, material) {
         const geometry = new THREE.BoxGeometry(0.9, 0.3, 0.9);
-        const cubeMaterials = [
-            new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_side.png"), side: THREE.DoubleSide }), //LEFT
-            new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_side.png"), side: THREE.DoubleSide }), //RIGHT
-            new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_top.png"), side: THREE.DoubleSide }), //TOP
-            new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_bottom.png"), side: THREE.DoubleSide }), //BOTTOM
-            new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_front.png"), side: THREE.DoubleSide }), //FRONT
-            new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_front.png"), side: THREE.DoubleSide }), //BACK
-        ];
-        const material = new THREE.MeshFaceMaterial(cubeMaterials);
+
         let mesh = new THREE.Mesh(geometry, material);
         mesh.position.y = 0.15;
 
@@ -27,10 +19,14 @@ export default class Robot extends MovableObject{
         this.mesh.add(object)
     }
 
-    dropOf(object, scene) {
-        object.position.set(this.mesh.position);
-        scene.add(object);
-        this.mesh.remove(object);
+    dropOff(scene, dropOffPointUuid) {
+        const dropable = this.mesh.children[1];
+        const dropOffPoint = scene.getObjectByProperty( 'uuid', dropOffPointUuid);
+        if ( dropOffPoint != undefined ) {
+            dropable.position.x = dropOffPoint.position.x;
+            dropable.position.z = dropOffPoint.position.z;
+            scene.add(dropable);
+        }
+        this.mesh.remove(dropable);
     }
-
 }

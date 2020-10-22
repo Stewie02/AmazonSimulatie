@@ -7,13 +7,18 @@ import java.util.*;
  * 3D object is. Ook implementeerd deze class de interface Updatable. Dit is omdat
  * een robot geupdate kan worden binnen de 3D wereld om zich zo voort te bewegen.
  */
-class Robot extends MovableObject implements Object3D {
+class Robot extends MovableObject implements Object3D, CanHoldRacks {
     private Rack pickedUpRack = null;
 
     private Queue<Position> positionsToVisit = new LinkedList<>();
 
     public Robot(double x, double y, double z) {
         super(x, y, z);
+    }
+
+    public Robot(Position pos)
+    {
+        super(pos);
     }
 
     public Robot(double x, double y, double z, Rack pickedUpRack) {
@@ -56,8 +61,12 @@ class Robot extends MovableObject implements Object3D {
 
     private double positionDifference(double dif)
     {
-        if (dif > 0) return 0.2;
-        if (dif < 0) return -0.2;
+        if (dif > 0)
+            if (dif >= 0.2) return 0.2;
+            else return dif;
+        if (dif < 0)
+            if (dif <= 0.2) return -0.2;
+            else return dif;
         return 0;
     }
 
@@ -66,10 +75,6 @@ class Robot extends MovableObject implements Object3D {
         rack.setPosition(position.x, position.y, position.z);
         this.pickedUpRack = rack;
 
-    }
-
-    public Rack getPickedUpRack() {
-        return this.pickedUpRack;
     }
 
     public Rack dropOffRack()
@@ -82,6 +87,15 @@ class Robot extends MovableObject implements Object3D {
     public void goToPosition(List<Position> goToPositions)
     {
         positionsToVisit.addAll(goToPositions);
+        System.out.println("Hahah" + positionsToVisit.size());
+    }
+
+    public boolean hasReachedPosition() {
+        return positionsToVisit.isEmpty();
+    }
+
+    public Rack getRack() {
+        return this.pickedUpRack;
     }
 
 

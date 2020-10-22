@@ -2,6 +2,7 @@ package com.nhlstenden.amazonsimulatie.views;
 
 import com.nhlstenden.amazonsimulatie.base.Command;
 import com.nhlstenden.amazonsimulatie.models.Object3D;
+import com.nhlstenden.amazonsimulatie.models.PathFinding.Node;
 import com.nhlstenden.amazonsimulatie.models.RackPosition;
 
 import java.util.List;
@@ -12,6 +13,9 @@ import java.util.List;
  */
 public interface View {
     void update(String event, Object3D data);
-    void sendRackPositions(List<RackPosition> rackPositions);
     void onViewClose(Command command);
+
+    void sendNode(String command, Node nodes);
+
+    void sendRackPositions(List<RackPosition> rackPositions);
 }

@@ -1,28 +1,8 @@
 import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r119/examples/jsm/controls/OrbitControls.js';
 import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r119/build/three.module.js';
+import Skybox from './Skybox.js';
 
 export default class World {
-    cameraPos = {
-        x: 15,
-        y: 5,
-        z: 15
-    }
-
-    animation = {
-        frames: 0,
-        object: undefined,
-        position: {
-            x: undefined,
-            y: undefined,
-            z: undefined
-        },
-        rotation: {
-            x: undefined,
-            y: undefined,
-            z: undefined
-        }
-    }
-
     worldObjects = {};
 
     constructor() {
@@ -33,12 +13,29 @@ export default class World {
         this.light = new THREE.AmbientLight(0xffffff, 0.5);
         this.directionalLight1 = new THREE.DirectionalLight(0xffffff, 1)
         this.directionalLight2 = new THREE.DirectionalLight(0xffffff, 1)
+        this.skybox = new Skybox(600)
         this.worldObjects = {};
+
+        this.truckDockingAudio = document.getElementById("truckDocking");
+
+        this.then = 0;
+        this.flashingLight = {
+            t: 0,
+            speed: 10
+        }
     }
 
-    init() {
-        this.camera.position.set(this.cameraPos.x, this.cameraPos.y, this.cameraPos.z);
-        this.cameraControls.update();
+    init(length, width) {
+        this.camera.position.set(17, 7, width / 2);
+
+        this.cameraControls.target = new THREE.Vector3(length / 2, 1.7, width / 2)
+        this.cameraControls.dampingFactor = 0.1;
+        this.cameraControls.enableDamping = true;
+        this.cameraControls.autoRotate = true;
+        this.cameraControls.autoRotateSpeed = 0.8;
+        this.cameraControls.maxDistance = 80;
+        this.cameraControls.enablePan = false;
+
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -54,6 +51,11 @@ export default class World {
         this.scene.add(this.directionalLight2)
         this.scene.add(this.light);
 
+        this.skybox.moveTo(length/2, 0, width/2)
+        this.scene.add(this.skybox.getMesh())
+
+        this.scene.fog = new THREE.Fog(0xffffff, 65, 80)
+
         this.animate();
     }
 
@@ -63,42 +65,30 @@ export default class World {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
-    animate = () => {
-        requestAnimationFrame(this.animate);
-        this.animation.frames > 0 ? this.runAnimation() : null;
+    animate = (now) => {
+        now *= 0.001;
+        const delta = now - this.then;
+        this.then = now;     
+
+        let truck = this.scene.getObjectByName("truck");
+        if ( truck != undefined && truck.position.z > -10 ) {
+            
+            truck.position.z < -9 ? this.truckDockingAudio.play() : null;
+
+            let flashingLight = this.scene.getObjectByName("flashingLightPointerObject");
+            if ( flashingLight !== undefined ) {
+                this.flashingLight.t += this.flashingLight.speed * delta
+                const y = 20*Math.cos(this.flashingLight.t)
+                const x = 20*Math.sin(this.flashingLight.t)
+                flashingLight.position.y = y;
+                flashingLight.position.x = x;
+            }
+
+        }
 
         this.cameraControls.update();
         this.renderer.render(this.scene, this.camera);
-    }
-
-    runAnimation() {
-        const mesh = this.animation.mesh;
-        const pos = this.animation.position;
-        const rotate = this.animation.rotation;
-
-        mesh.position.x += pos.x;
-        mesh.position.y += pos.y;
-        mesh.position.z += pos.z;
-        mesh.rotation.x += rotate.x * Math.PI / 180;
-        mesh.rotation.y += rotate.y * Math.PI / 180;
-        mesh.rotation.z += rotate.z * Math.PI / 180;
-
-        this.animation.frames -= 1;
-    }
-
-    setAnimation = (mesh, frames, moveTo = {x:0, y:0, z:0}, rotate = {x:0, y:0, z:0}) => {
-        this.animation.frames = frames;
-        this.animation.mesh = mesh;
-        this.animation.position = {
-            x: moveTo.x / frames,
-            y: moveTo.y / frames,
-            z: moveTo.z / frames,
-        },
-        this.animation.rotation = {
-            x: rotate.x / frames,
-            y: rotate.y / frames,
-            z: rotate.z / frames,
-        }
+        requestAnimationFrame(this.animate);
     }
 
     addObject = (object) => {

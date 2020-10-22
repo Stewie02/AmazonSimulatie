@@ -13,24 +13,29 @@ public class MovableObjectsManager {
     private final RackPosition[][] rackPositions;
     private final Robot[] robots;
     private final Truck truck;
-    private final List<Node> nodeList;
-    private final Dijkstra dijkstra = new Dijkstra();
+    private final Dijkstra dijkstra;
 
     public MovableObjectsManager()
     {
-        robots = new Robot[2];
-        fillRobotArray();
-
-        rackPositions = new RackPosition[8][8];
+        rackPositions = new RackPosition[Constants.AMOUNT_OF_RACKS_HEIGHT][Constants.AMOUNT_OF_RACKS_WIDTH];
         fillRackPositionArray();
 
-        nodeList = new ArrayList<>();
-        createNodes();
+        dijkstra = new Dijkstra(NodeListCreator.createNodeList(rackPositions));
 
-        truck = new Truck(2, -1.55, -7.1);
+        List<Position> path = dijkstra.giveShortestPath(dijkstra.getNodes().get(0), dijkstra.getNodes().get(new Random().nextInt(dijkstra.getNodes().size())));
+
+        for (Position p : path)
+        {
+            System.out.println("X: " + p.getX() + "Z: " + p.getZ());
+        }
+
+        robots = new Robot[1];
+        fillRobotArray();
+        robots[0].goToPosition(path);
+
+        truck = new Truck(2, -1.55, -7);
     }
 
-    // TODO: Add the truck
     public List<Object3D> getMovableObjectsAsList()
     {
         List<Object3D> allObjects = new ArrayList<>();
@@ -53,11 +58,16 @@ public class MovableObjectsManager {
     public List<Object3D> update()
     {
         List<Object3D> changedObjects = new ArrayList<>();
-        for (MovableObject robot : robots)
+        for (MovableObject object : robots)
         {
-            if (robot.update())
-                changedObjects.add(new ProxyObject3D((Object3D)robot));
+            if (object.update())
+                changedObjects.add(new ProxyObject3D((Object3D)object));
+            if (object instanceof Robot)
+                if (((Robot) object).hasReachedPosition())
+                    ((Robot) object).goToPosition(dijkstra.giveShortestPath(dijkstra.getNodes().get(0), dijkstra.getNodes().get(new Random().nextInt(dijkstra.getNodes().size()))));
         }
+        if (truck.update())
+            changedObjects.add(new ProxyObject3D((Object3D)truck));
         return changedObjects;
     }
 
@@ -65,15 +75,8 @@ public class MovableObjectsManager {
     private void fillRobotArray()
     {
         for (int i = 0; i < robots.length; i++) {
-            robots[i] = new Robot(i * 1.5, 0, 0);
+            robots[i] = new Robot(dijkstra.getNodes().get(0).getPosition());
         }
-
-        List<Position> pos1 = new ArrayList<>();
-        List<Position> pos2 = new ArrayList<>();
-        pos1.add(new Position(100, 0, 0));
-        pos2.add(new Position(0, 100, 0));
-        robots[0].goToPosition(pos2);
-        robots[1].goToPosition(pos1);
     }
 
     private void fillRackPositionArray()
@@ -82,27 +85,27 @@ public class MovableObjectsManager {
         for (int column = 0; column < rackPositions.length; column++)
         {
             x = 0;
-            if (column % 2 == 0 && column != 0) z += 2.4;
-            else if(column != 0) z += 1.2;
+            if (column % 2 == 0 && column != 0) z += Constants.DISTANCE_BETWEEN_RACK_WITH_PATH;
+            else if(column != 0) z += Constants.DISTANCE_BETWEEN_RACKS;
 
             for (int row = 0; row < rackPositions[column].length; row++)
             {
-                if (row % 2 == 0 && row != 0) x += 2.4;
-                else if(row != 0) x += 1.2;
+                if (row % 2 == 0 && row != 0) x += Constants.DISTANCE_BETWEEN_RACK_WITH_PATH;
+                else if(row != 0) x += Constants.DISTANCE_BETWEEN_RACKS;
 
                 Rack r = null;
                 int rand = new Random().nextInt(100);
                 if (rand < 80) r = new Rack(x, 0, z);
 
                 rackPositions[column][row] = new RackPosition(x, 0.01, z, r);
+                if (r != null) r.setHolder(rackPositions[column][row]);
             }
         }
     }
 
-    private void createNodes()
+    public List<Node> getNodes()
     {
-        // TODO: implementation functionality
-
+        return this.dijkstra.getNodes();
     }
 
 

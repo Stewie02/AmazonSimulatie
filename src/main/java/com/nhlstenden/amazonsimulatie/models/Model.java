@@ -1,5 +1,7 @@
 package com.nhlstenden.amazonsimulatie.models;
 
+import com.nhlstenden.amazonsimulatie.models.PathFinding.Node;
+
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
@@ -27,4 +29,5 @@ public interface Model {
     void addObserver(PropertyChangeListener pcl);
     List<Object3D> getWorldObjectsAsList();
     List<RackPosition> getRackPositions();
+    List<Node> getNodes();
 }

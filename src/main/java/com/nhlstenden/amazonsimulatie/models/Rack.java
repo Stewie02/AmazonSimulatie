@@ -7,6 +7,7 @@ public class Rack {
 
     private UUID uuid;
     private final Position position;
+    private CanHoldRacks holder;
 
     public Rack(double x, double y, double z)
     {
@@ -26,5 +27,14 @@ public class Rack {
     public String getUUID()
     {
         return this.uuid.toString();
+    }
+
+    public CanHoldRacks getHolder() {
+        return holder;
+    }
+
+    public void setHolder(CanHoldRacks holder)
+    {
+        this.holder = holder;
     }
 }
