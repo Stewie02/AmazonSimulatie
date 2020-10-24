@@ -8,7 +8,7 @@ import SimpleRack from './objects/SimpleRack.js';
 import Manager from './objects/imported/Manager/Manager.js';
 import TestNode from './objects/TestNode.js';
 
-let world;
+let world, capacity;
 let robotCount = 1;
 const meshLoader = new PreMeshLoader()
 
@@ -42,10 +42,10 @@ function commandHandler(command) {
             dropOff(command.parameters);
             break;
         case "node":
-            const node = new TestNode(.2);
-            const pos = command.parameters;
-            node.moveTo(pos.x, pos.y, pos.z);
-            world.addObject( node );
+//            const node = new TestNode(.2);
+//            const pos = command.parameters;
+//            node.moveTo(pos.x, pos.y, pos.z);
+//            world.addObject( node );
             break;
         default:
             console.log("command did not match");
@@ -103,7 +103,8 @@ async function build(parameters) {
 
 function buildWarehouse(parameters) {
     const warehouse = new WareHouse( parameters );
-    document.getElementById('capacity').innerText = warehouse.rackSpots.mesh.children.length;
+    capacity = warehouse.rackSpots.mesh.children.length
+    document.getElementById('capacity').innerText = capacity;
     warehouse.rackSpots.mesh.children.map(spot => {
         if (spot.userData.occupied) {
             build({
@@ -196,19 +197,25 @@ function updateDashboard() {
     let htmlRobotsStatus = [];
     Object.keys(world.worldObjects).map(key => {
         const object = world.worldObjects[key].mesh;
+        const metersRun = object.userData.metersRun;
+        let deltaMeters = metersRun - object.userData.lastMetersRun;
+        object.userData.lastMetersRun = metersRun;
+        const kmh = deltaMeters * 3.6;
+
         switch (object.name) {
             case "simpleRack":
                 racks++;
                 break;
             case "robot":
                 robots++;
-                htmlRobotsStatus.push('<tr><td>'+ object.userData.number +'</td><td>' + Math.round(object.userData.metersRun * 10)/ 10 + '</td><td>'+ object.userData.movedItems +'</td></tr>');
+                htmlRobotsStatus.push('<tr><td>'+ object.userData.number +'</td><td>' + Math.round( kmh * 10)/ 10 + '</td><td>' + Math.round(metersRun * 10)/ 10 + '</td><td>'+ object.userData.movedItems +'</td></tr>');
                 break;    
             default:
                 break;
         }
     })
 
+    document.getElementById('occupationLevel').innerText = Math.round((racks / capacity)*100);
     document.getElementById('nrRacks').innerHTML = racks;
     document.getElementById('nrRobots').innerHTML = robots;
     document.getElementById('robotsStatus').innerHTML = htmlRobotsStatus.join('');

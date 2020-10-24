@@ -61,6 +61,7 @@ export default class Robot extends MovableObject{
         group.userData.number = robotNumber;
         group.userData.movedItems = 0;
         group.userData.metersRun = 0;
+        group.userData.lastMetersRun = 0;
 
         
        
