@@ -18,11 +18,12 @@
         <button class="tDark" id="centerCam">Center Camera</button>
     </div>
     <div class="tDark" id="dashboard">
+        <p>Warehouse capacity: <span id="capacity"></span></p>
         <p>Total racks in warehouse: <span id="nrRacks"></span></p>
         <p>Total robots in warehouse: <span id="nrRobots"></span></p>
         <table >
             <thead>
-                <td>Robot nr</td>
+                <td>Robot number</td>
                 <td>Meters run*</td>
                 <td>Racks moved*</td>
             </thead>
@@ -32,7 +33,7 @@
         <p>*Since browser reload</p>
     </div>
     <div class="helloRobotContainer">
-        <div class="tDark" id="helloRobot"></div>
+        <div class="tDark" id="helloRobot">Poke a robot</div>
     </div>
     <script type="module" src="main.js"></script>
 </body>

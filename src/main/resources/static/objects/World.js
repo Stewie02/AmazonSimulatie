@@ -82,7 +82,7 @@ export default class World {
         let intersects = this.raycaster.intersectObjects( this.scene.children, true );
 	    for ( let i = 0; i < intersects.length; i++ ) {
             const robot = intersects[i].object.parent.userData;
-            document.getElementById('helloRobot').innerHTML = "Hi, my name is <b>" + robot.name + "</b> but you can call me Robot number <b>" + robot.number + "</b>. So far I have travelled <b>" + Math.round(robot.metersRun * 10) / 10 + "</b> meters and moved <b>" + robot.movedItems + "</b> racks around this warehouse.";
+            document.getElementById('helloRobot').innerHTML = "Hi, my name is <b>" + robot.name + "</b> but you can call me Robot number <b>" + robot.number + "</b>. So far I have travelled <b>" + Math.round(robot.metersRun * 10)/10 + "</b> meters and moved <b>" + robot.movedItems + "</b> racks around this warehouse.";
         }
     }
 

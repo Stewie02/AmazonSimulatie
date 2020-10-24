@@ -15,7 +15,7 @@ public class NodeListCreator {
         double distanceToMiddleOfPath = (Constants.RACK_POSITION_SIZE / 2) + (pathSize / 2);
 
         // We do + 1 to create one extra for the row beneath en right
-        BoxPart[][] boxParts = new BoxPart[Constants.AMOUNT_OF_RACKS_WIDTH / 2][Constants.AMOUNT_OF_RACKS_HEIGHT / 2];
+        BoxPart[][] boxParts = new BoxPart[Constants.AMOUNT_OF_RACKS_HEIGHT / 2][Constants.AMOUNT_OF_RACKS_WIDTH / 2];
 
         for (int i = 0; i < Constants.AMOUNT_OF_RACKS_HEIGHT / 2; i++)
         {

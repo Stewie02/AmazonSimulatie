@@ -73,14 +73,16 @@ export default class Robot extends MovableObject{
         this.mesh.add(object);
     }
 
-    dropOff(scene, dropOffPointUuid) {
+    dropOff(world, dropOffPointUuid) {
         const dropable = this.mesh.children[1];
-        const dropOffPoint = scene.getObjectByProperty( 'uuid', dropOffPointUuid);
-        if ( dropOffPoint != undefined ) {
+        if ( dropOffPointUuid != undefined ) {
+            const dropOffPoint = world.scene.getObjectByProperty( 'uuid', dropOffPointUuid);
             dropable.position.x = dropOffPoint.position.x;
             dropable.position.y -= 0.3;
             dropable.position.z = dropOffPoint.position.z;
-            scene.add(dropable);
+            world.scene.add(dropable);
+        } else {
+            delete world.worldObjects[dropable.uuid];
         }
         this.mesh.remove(dropable);
     }

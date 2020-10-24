@@ -15,27 +15,13 @@ const meshLoader = new PreMeshLoader()
 window.onload = function () {
     world = new World();
 
-    commandHandler({
-                command: "build",
-                parameters: {
-                    type: "manager",
-                    uuid: "Rick",
-                    x: 21,
-                    y: 5,
-                    z: 10,
-                    rotationX: 0,
-                    rotationY: 270,
-                    rotationZ: 0
-                }
-    });
-
     document.getElementById('darkMode').addEventListener("click", toggleDarkMode);
     document.getElementById('sound').addEventListener("click", toggleSound);
     document.getElementById('rotate').addEventListener("click", toggleRotation);
     document.getElementById('centerCam').addEventListener("click", centerCam);
 
      const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port + "/connectToSimulation");
-     socket.onmessage = event => { commandHandler( JSON.parse(event.data) ); };
+     socket.onmessage = event => commandHandler( JSON.parse(event.data) );
 }
 
 function commandHandler(command) {
@@ -56,7 +42,7 @@ function commandHandler(command) {
             dropOff(command.parameters);
             break;
         case "node":
-            const node = new TestNode(1);
+            const node = new TestNode(.2);
             const pos = command.parameters;
             node.moveTo(pos.x, pos.y, pos.z);
             world.addObject( node );
@@ -117,6 +103,7 @@ async function build(parameters) {
 
 function buildWarehouse(parameters) {
     const warehouse = new WareHouse( parameters );
+    document.getElementById('capacity').innerText = warehouse.rackSpots.mesh.children.length;
     warehouse.rackSpots.mesh.children.map(spot => {
         if (spot.userData.occupied) {
             build({
@@ -153,7 +140,7 @@ function pickUp(parameters) {
 }
 
 function dropOff(parameters) {
-    world.worldObjects[parameters.robot].dropOff(world.scene, parameters.position)
+    world.worldObjects[parameters.robot].dropOff(world, parameters.position)
 }
 
 function toggleDarkMode(event) {
@@ -167,7 +154,7 @@ function toggleDarkMode(event) {
         Object.keys(buttons).map(key => {
             let style = buttons[key].style; 
             style.color = 'white';
-            style.backgroundColor = 'black';
+            style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
         })
     } else {
         walls.material.color.setHex( 0x666666 );
@@ -177,7 +164,7 @@ function toggleDarkMode(event) {
         Object.keys(buttons).map(key => {
             let style = buttons[key].style; 
             style.color = 'black';
-            style.backgroundColor = 'white';
+            style.backgroundColor = 'rgba(255, 255, 255, 0.75)';
         })
     }
     world.skybox.mesh.material.needsUpdate = true
@@ -215,7 +202,7 @@ function updateDashboard() {
                 break;
             case "robot":
                 robots++;
-                htmlRobotsStatus.push('<tr><td>'+ object.userData.number +'</td><td>' + Math.round(object.userData.metersRun * 10)/10 + '</td><td>'+ object.userData.movedItems +'</td></tr>');
+                htmlRobotsStatus.push('<tr><td>'+ object.userData.number +'</td><td>' + Math.round(object.userData.metersRun * 10)/ 10 + '</td><td>'+ object.userData.movedItems +'</td></tr>');
                 break;    
             default:
                 break;

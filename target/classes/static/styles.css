@@ -4,13 +4,13 @@
     left: 10px;
     display: flex;
     flex-direction: column;
+    z-index: 100;
 }
 
 .tDark {
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.75);
     color: black;
     border-radius: 5px;
-    font-weight: bold;
     font-size: 16px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 2px;
@@ -30,8 +30,8 @@ button {
     position: fixed;
     top: 10px;
     right: 10px;
-    padding: 10px;
-    width: 200px;
+    padding: 12px;
+    width: 210px;
 }
 
 #dashboard p {
@@ -42,6 +42,7 @@ table {
     border-collapse: collapse;
     width: 100%;
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 th, td {
@@ -58,6 +59,7 @@ th, td {
     right: 10px;
     display: flex;
     justify-content: center;
+    z-index: 0;
 }
 
 #helloRobot {
@@ -65,4 +67,11 @@ th, td {
     padding-right: 10px;
     padding-bottom: 2px;
     font-weight: normal;
+    margin-left: 100px;
+    margin-right: 210px;
+    width: 50%;
+}
+
+span { 
+    font-weight: bold;
 }
