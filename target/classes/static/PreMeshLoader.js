@@ -37,14 +37,9 @@ export default class PreMeshLoader{
             cardBoardBox: { low: cardBoardBoxLow, high: cardBoardBoxHigh }
         }
 
-        const robot = [
-            new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_side.png"), side: THREE.DoubleSide, fog: false }), //LEFT
-            new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_side.png"), side: THREE.DoubleSide, fog: false }), //RIGHT
-            new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_top.png"), side: THREE.DoubleSide, fog: false }), //TOP
-            new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_bottom.png"), side: THREE.DoubleSide, fog: false }), //BOTTOM
-            new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_front.png"), side: THREE.DoubleSide, fog: false }), //FRONT
-            new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_front.png"), side: THREE.DoubleSide, fog: false }), //BACK
-        ];
-        this.robot = robot;
+        this.robot = {
+            side: new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_side.png"), side: THREE.FrontSide, fog: false }), //LEFT
+            front: new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_front.png"), side: THREE.FrontSide, fog: false }) //FRONT
+        }
     }
 }

@@ -10,6 +10,7 @@ import com.nhlstenden.amazonsimulatie.views.DefaultWebSocketView;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -41,6 +42,7 @@ public class App extends SpringBootServletInitializer implements WebSocketConfig
      */
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
+//        new SpringApplicationBuilder(App.class).web(false).run(args);
     }
     
     //De App is de applicatie en heeft de controller voor de simulatie in zich

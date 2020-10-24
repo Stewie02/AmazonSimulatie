@@ -2,7 +2,8 @@ package com.nhlstenden.amazonsimulatie.views;
 
 import com.nhlstenden.amazonsimulatie.base.Command;
 import com.nhlstenden.amazonsimulatie.models.Object3D;
-import com.nhlstenden.amazonsimulatie.models.PathFinding.Node;
+import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 import com.nhlstenden.amazonsimulatie.models.RackPosition;
 
 import java.util.List;
@@ -18,4 +19,6 @@ public interface View {
     void sendNode(String command, Node nodes);
 
     void sendRackPositions(List<RackPosition> rackPositions);
+
+    void sendWorldChange(WorldChange worldChanges);
 }

@@ -1,4 +1,4 @@
-package com.nhlstenden.amazonsimulatie.models.PathFinding;
+package com.nhlstenden.amazonsimulatie.models.pathfinding;
 
 import com.nhlstenden.amazonsimulatie.models.Position;
 
@@ -68,7 +68,7 @@ public class Dijkstra {
                 // We lopen door alle nodes heen.
                 // Kijken welke nodes geconnect zijn met u, is de afstand van u naar een willekeurig kleiner dan de huidige afstand updaten
                 if (!sptSet.get(node) && u.isConnectedTo(node) && dist.get(u) != Integer.MAX_VALUE && dist.get(u) + 1 < dist.get(node)) {
-                    System.out.println("Fastahh");
+
                     dist.replace(node, dist.get(u) + 1);
                     List<Node> path = new ArrayList<>(paths.get(u));
                     path.add(node);

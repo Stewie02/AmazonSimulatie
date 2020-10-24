@@ -1,6 +1,6 @@
 package com.nhlstenden.amazonsimulatie.models;
 
-import com.nhlstenden.amazonsimulatie.models.PathFinding.Node;
+import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +14,7 @@ public class NodeListCreator {
         double pathSize = Constants.DISTANCE_BETWEEN_RACK_WITH_PATH - Constants.RACK_POSITION_SIZE;
         double distanceToMiddleOfPath = (Constants.RACK_POSITION_SIZE / 2) + (pathSize / 2);
 
+        // We do + 1 to create one extra for the row beneath en right
         BoxPart[][] boxParts = new BoxPart[Constants.AMOUNT_OF_RACKS_WIDTH / 2][Constants.AMOUNT_OF_RACKS_HEIGHT / 2];
 
         for (int i = 0; i < Constants.AMOUNT_OF_RACKS_HEIGHT / 2; i++)
@@ -32,6 +33,14 @@ public class NodeListCreator {
                 nodes[NodeConstants.TOP_RIGHT] = createNode(rPs[RackPositionConstants.TOP_RIGHT], NodeConstants.TOP_RIGHT, distanceToMiddleOfPath);
                 nodes[NodeConstants.LEFT_MIDDLE] = createNode(rPs[RackPositionConstants.TOP_LEFT], NodeConstants.LEFT_MIDDLE, distanceToMiddleOfPath);
                 nodes[NodeConstants.LEFT_BOTTOM] = createNode(rPs[RackPositionConstants.BOTTOM_LEFT], NodeConstants.LEFT_BOTTOM, distanceToMiddleOfPath);
+
+                rPs[RackPositionConstants.TOP_LEFT].setAdjacentNode(nodes[NodeConstants.TOP_MIDDLE]);
+                rPs[RackPositionConstants.TOP_RIGHT].setAdjacentNode(nodes[NodeConstants.TOP_RIGHT]);
+
+                if (i > 0) {
+                    boxParts[i - 1][j].getRackPosition(RackPositionConstants.BOTTOM_LEFT).setAdjacentNode(nodes[NodeConstants.TOP_LEFT]);
+                    boxParts[i - 1][j].getRackPosition(RackPositionConstants.BOTTOM_RIGHT).setAdjacentNode(nodes[NodeConstants.TOP_RIGHT]);
+                }
 
                 connectNodes(nodes[NodeConstants.TOP_LEFT], nodes[NodeConstants.TOP_MIDDLE]);
                 connectNodes(nodes[NodeConstants.TOP_MIDDLE], nodes[NodeConstants.TOP_RIGHT]);
@@ -87,7 +96,7 @@ public class NodeListCreator {
             x = rackPosition.getPosition().getX() - difference;
             z = rackPosition.getPosition().getZ();
         }
-        return new Node(x, 0.15, z);
+        return new Node(x, 0, z);
     }
 
     private static void connectNodes(Node n1, Node n2)

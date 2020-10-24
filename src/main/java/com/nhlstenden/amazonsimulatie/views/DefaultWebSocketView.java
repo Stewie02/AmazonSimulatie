@@ -4,11 +4,12 @@ import java.io.IOException;
 import java.util.List;
 
 import com.nhlstenden.amazonsimulatie.base.Command;
-import com.nhlstenden.amazonsimulatie.models.HasPosition;
 import com.nhlstenden.amazonsimulatie.models.Object3D;
 
-import com.nhlstenden.amazonsimulatie.models.PathFinding.Node;
-import com.nhlstenden.amazonsimulatie.models.Position;
+import com.nhlstenden.amazonsimulatie.models.Robot;
+import com.nhlstenden.amazonsimulatie.models.WorldChanges.PositionChange;
+import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 import com.nhlstenden.amazonsimulatie.models.RackPosition;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -69,6 +70,18 @@ public class DefaultWebSocketView implements View {
     }
 
     @Override
+    public void sendWorldChange(WorldChange worldChange) {
+        System.out.println("Sending worldchange!!");
+
+        sendMessage(
+                "{"
+                        + surroundString("command") + ": " + surroundString(worldChange.getCommand()) + ","
+                        + surroundString("parameters") + ": " + worldChange.getParametersString()
+                + "}"
+        );
+    }
+
+    @Override
     public void sendNode(String event, Node node)
     {
         sendMessage("{"
@@ -105,16 +118,24 @@ public class DefaultWebSocketView implements View {
      * naar de client.
      */
     private String jsonifyObject3D(Object3D object) {
-        return  "{" 
+        String str =   "{"
                 + surroundString("uuid") + ":" + surroundString(object.getUUID()) + ","
-                + surroundString("type") + ":" + surroundString(object.getType()) + ","
-                + surroundString("x") + ":" + object.getX() + ","
+                + surroundString("type") + ":" + surroundString(object.getType()) + ",";
+
+        if (object instanceof Robot)
+            if (((Robot) object).getRack() != null)
+                str += surroundString("rack") + ":" + surroundString(((Robot)object).getRack().getUUID()) + ",";
+            else str += surroundString("rack") + ":" + surroundString("undefined") + ",";
+
+        str += surroundString("x") + ":" + object.getX() + ","
                 + surroundString("y") + ":" + object.getY() + ","
                 + surroundString("z") + ":" + object.getZ() + ","
                 + surroundString("rotationX") + ":" + object.getRotationX() + ","
                 + surroundString("rotationY") + ":" + object.getRotationY() + ","
                 + surroundString("rotationZ") + ":" + object.getRotationZ()
               + "}";
+
+        return str;
     }
 
     private String surroundString(String s) {

@@ -1,5 +1,7 @@
 package com.nhlstenden.amazonsimulatie.models;
 
+import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+
 /*
  * Deze interface beschrijft wat een onderdeel van het model moet kunnen om deze
  * te kunnen updaten. In de lijst met objecten in de wereld (zie class World) zitten
@@ -8,5 +10,5 @@ package com.nhlstenden.amazonsimulatie.models;
  * wereld update.
  */
 interface Updatable {
-    boolean update();
+    WorldChange update();
 }

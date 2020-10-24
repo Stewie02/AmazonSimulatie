@@ -1,12 +1,15 @@
 package com.nhlstenden.amazonsimulatie.models;
 
+import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
+
 import java.util.UUID;
 
 public class RackPosition implements CanHoldRacks, HasPosition {
 
     private final Position position;
     private Rack rack = null;
-    private UUID uuid;
+    private final UUID uuid;
+    private Node adjacentNode = null;
 
     public RackPosition(double x, double y, double z, Rack rack) {
         this(x, y, z);
@@ -34,6 +37,14 @@ public class RackPosition implements CanHoldRacks, HasPosition {
     public void setRack(Rack rack) {
         this.rack = rack;
         rack.setPosition(position.x, position.y, position.z);
+    }
+
+    public Node getAdjacentNode() {
+        return adjacentNode;
+    }
+
+    public void setAdjacentNode(Node adjacentNode) {
+        this.adjacentNode = adjacentNode;
     }
 
 }

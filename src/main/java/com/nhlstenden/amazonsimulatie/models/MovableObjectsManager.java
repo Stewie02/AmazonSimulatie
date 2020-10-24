@@ -1,7 +1,12 @@
 package com.nhlstenden.amazonsimulatie.models;
 
-import com.nhlstenden.amazonsimulatie.models.PathFinding.Dijkstra;
-import com.nhlstenden.amazonsimulatie.models.PathFinding.Node;
+import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.pathfinding.Dijkstra;
+import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
+import com.nhlstenden.amazonsimulatie.models.tasks.DropOffRack;
+import com.nhlstenden.amazonsimulatie.models.tasks.GoToPosition;
+import com.nhlstenden.amazonsimulatie.models.tasks.PickUpRack;
+import com.nhlstenden.amazonsimulatie.models.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,10 +27,11 @@ public class MovableObjectsManager {
 
         dijkstra = new Dijkstra(NodeListCreator.createNodeList(rackPositions));
 
-        robots = new Robot[1];
+        robots = new Robot[2];
         fillRobotArray();
 
-        truck = new Truck(2, -1.55, -7);
+        truck = new Truck();
+
     }
 
     public List<Object3D> getMovableObjectsAsList()
@@ -47,27 +53,31 @@ public class MovableObjectsManager {
         return rackPositionsList;
     }
 
-    public List<Object3D> update()
+    public List<WorldChange> update()
     {
-        List<Object3D> changedObjects = new ArrayList<>();
+        List<WorldChange> worldChanges = new ArrayList<>();
         for (MovableObject object : robots)
         {
-            if (object.update())
-                changedObjects.add(new ProxyObject3D((Object3D)object));
+            WorldChange worldChange = object.update();
+            if (worldChange != null) worldChanges.add(worldChange);
             if (object instanceof Robot)
-                if (((Robot) object).hasReachedPosition())
-                    ((Robot) object).goToPosition(dijkstra.giveShortestPath(((Robot) object).getLatestNodePosition(), dijkstra.getNodes().get(new Random().nextInt(dijkstra.getNodes().size()))));
+                if (((Robot) object).finishedAllTasks()) {
+                    ((Robot) object).addTasks(createTasks((Robot)object));
+                }
+
         }
-        if (truck.update())
-            changedObjects.add(new ProxyObject3D((Object3D)truck));
-        return changedObjects;
+        // TODO: Do everything with the robot
+        WorldChange truckChange = truck.update();
+        if (truckChange != null) worldChanges.add(truckChange);
+        if (truck.tasksAvailable()) truck.redeemTask(truck.getNextTask());
+        return worldChanges;
     }
 
 
     private void fillRobotArray()
     {
         for (int i = 0; i < robots.length; i++) {
-            robots[i] = new Robot(dijkstra.getNodes().get(0).getPosition());
+            robots[i] = new Robot(dijkstra.getNodes().get(i));
         }
     }
 
@@ -93,6 +103,46 @@ public class MovableObjectsManager {
                 if (r != null) r.setHolder(rackPositions[column][row]);
             }
         }
+    }
+
+    private List<Task> createTasks(Robot robot) {
+
+        List<Task> tasks = new ArrayList<>();
+
+        List<Position> path = new ArrayList<>();
+        RackPosition finalPos = null;
+        RackPosition possibility = null;
+        while (finalPos == null)
+        {
+            int randomInt0 = new Random().nextInt(rackPositions.length);
+            int randomInt1 = new Random().nextInt(rackPositions[0].length);
+            possibility = rackPositions[randomInt0][randomInt1];
+            if (possibility.getAdjacentNode() != null && possibility.getRack() != null) finalPos = possibility;
+        }
+        Position surePos = finalPos.getAdjacentNode().getPosition();
+        Rack moving = possibility.getRack();
+        path = dijkstra.giveShortestPath(robot.getLatestNodePosition(), finalPos.getAdjacentNode());
+        GoToPosition goToPosition = new GoToPosition(path);
+
+        tasks.add(goToPosition);
+        tasks.add(new PickUpRack(possibility.getRack()));
+
+        finalPos = null;
+        possibility = null;
+        while (finalPos == null)
+        {
+            int randomInt0 = new Random().nextInt(rackPositions.length);
+            int randomInt1 = new Random().nextInt(rackPositions[0].length);
+            possibility = rackPositions[randomInt0][randomInt1];
+            if (possibility.getAdjacentNode() != null && possibility.getRack() == null) finalPos = possibility;
+        }
+        path = dijkstra.giveShortestPath(surePos, finalPos.getAdjacentNode());
+        goToPosition = new GoToPosition(path);
+        tasks.add(goToPosition);
+        tasks.add(new DropOffRack(moving, possibility));
+
+
+        return tasks;
     }
 
     public List<Node> getNodes()

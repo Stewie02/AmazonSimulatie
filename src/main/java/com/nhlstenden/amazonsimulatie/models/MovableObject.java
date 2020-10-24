@@ -1,10 +1,10 @@
 package com.nhlstenden.amazonsimulatie.models;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+
 import java.util.UUID;
 
-public abstract class MovableObject implements Updatable {
+public abstract class MovableObject implements Updatable, Object3D {
 
     protected Position position;
     protected double rotationX, rotationY, rotationZ;
@@ -26,7 +26,7 @@ public abstract class MovableObject implements Updatable {
         return this.uuid.toString();
     }
 
-    public abstract boolean update();
+    public abstract WorldChange update();
 
     public double getX() {
         return this.position.getX();
@@ -51,5 +51,7 @@ public abstract class MovableObject implements Updatable {
     public double getRotationZ() {
         return this.rotationZ;
     }
+
+    public abstract String getType();
 
 }

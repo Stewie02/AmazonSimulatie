@@ -1,6 +1,7 @@
 package com.nhlstenden.amazonsimulatie.models;
 
-import com.nhlstenden.amazonsimulatie.models.PathFinding.Node;
+import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -49,11 +50,11 @@ public class World implements Model {
      */
     @Override
     public void update() {
-        List<Object3D> changedObjects = this.movableObjectsManager.update();
-        for (Object3D object : changedObjects)
-        {
-            pcs.firePropertyChange(Model.UPDATE_COMMAND, null, object);
-        }
+//        List<WorldChange> worldChanges = this.movableObjectsManager.update();
+//        for (WorldChange change : worldChanges)
+//        {
+//            pcs.firePropertyChange(Model.UPDATE_COMMAND, null, change);
+//        }
 //        for (Object3D object : this.worldObjects) {
 //            if(object instanceof Updatable) {
 //                if (((Updatable)object).update()) {
@@ -62,6 +63,11 @@ public class World implements Model {
 //            }
 //        }
     }
+
+    public List<WorldChange> newUpdate() {
+        return this.movableObjectsManager.update();
+    }
+
 
     /*
      * Standaardfunctionaliteit. Hoeft niet gewijzigd te worden.

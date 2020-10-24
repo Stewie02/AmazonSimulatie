@@ -1,11 +1,13 @@
 package com.nhlstenden.amazonsimulatie.controllers;
 
 import java.beans.PropertyChangeEvent;
+import java.util.List;
 
 import com.nhlstenden.amazonsimulatie.base.Command;
 import com.nhlstenden.amazonsimulatie.models.Model;
 import com.nhlstenden.amazonsimulatie.models.Object3D;
-import com.nhlstenden.amazonsimulatie.models.PathFinding.Node;
+import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 import com.nhlstenden.amazonsimulatie.views.View;
 
 /*
@@ -30,7 +32,7 @@ public class SimulationController extends Controller {
     @Override
     public void run() {
         while (true) {
-            this.getModel().update();
+            sendWorldChange(this.getModel().newUpdate());
 
             try {
                 Thread.sleep(100);
@@ -61,10 +63,10 @@ public class SimulationController extends Controller {
 
         view.sendRackPositions(this.getModel().getRackPositions());
 
-//        for (Node node : this.getModel().getNodes())
-//        {
-//            view.sendNode("node", node);
-//        }
+        for (Node node : this.getModel().getNodes())
+        {
+            view.sendNode("node", node);
+        }
 
         /*
          * Dit stukje code zorgt ervoor dat wanneer een nieuwe view verbinding maakt, deze view één
@@ -88,6 +90,16 @@ public class SimulationController extends Controller {
 
             if(currentView != null) {
                 currentView.update(evt.getPropertyName(), (Object3D)evt.getNewValue());
+            }
+        }
+    }
+
+    private void sendWorldChange(List<WorldChange> worldChanges) {
+        for(int i = 0; i < this.getViews().size(); i++) {
+            View currentView = this.getViews().get(i);
+
+            for (WorldChange worldChange : worldChanges) {
+                currentView.sendWorldChange(worldChange);
             }
         }
     }

@@ -10,6 +10,7 @@ export default class World {
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
         this.cameraControls = new OrbitControls(this.camera, this.renderer.domElement);
+        this.raycaster = new THREE.Raycaster();
         this.light = new THREE.AmbientLight(0xffffff, 0.5);
         this.directionalLight1 = new THREE.DirectionalLight(0xffffff, 1)
         this.directionalLight2 = new THREE.DirectionalLight(0xffffff, 1)
@@ -23,18 +24,23 @@ export default class World {
             t: 0,
             speed: 10
         }
+
+        this.mouse = new THREE.Vector2( 1, 1 );
     }
 
     init(length, width) {
-        this.camera.position.set(17, 7, width / 2);
+        this.length = length;
+        this.width = width;
+
+        this.camera.position.set(-5 , 7, width + 5);
 
         this.cameraControls.target = new THREE.Vector3(length / 2, 1.7, width / 2)
         this.cameraControls.dampingFactor = 0.1;
         this.cameraControls.enableDamping = true;
-        this.cameraControls.autoRotate = true;
+        this.cameraControls.autoRotate = false;
         this.cameraControls.autoRotateSpeed = 0.8;
-        this.cameraControls.maxDistance = 80;
-        this.cameraControls.enablePan = false;
+        this.cameraControls.maxDistance = 350;
+        this.cameraControls.enablePan = true;
 
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -43,6 +49,9 @@ export default class World {
         document.body.appendChild(this.renderer.domElement);
 
         window.addEventListener('resize', () => this.onWindowResize(), false);
+        window.addEventListener('click', (event) => this.onMouseClick(event), false );
+
+        this.raycaster.layers.set( 1 )
 
         this.renderer.setClearColor( 0xffffff );
         this.directionalLight1.position.set(1,1,-1);
@@ -65,6 +74,18 @@ export default class World {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
+    onMouseClick( event ) {
+        this.mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        this.mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+        this.raycaster.setFromCamera( this.mouse, this.camera );
+        let intersects = this.raycaster.intersectObjects( this.scene.children, true );
+	    for ( let i = 0; i < intersects.length; i++ ) {
+            const robot = intersects[i].object.parent.userData;
+            document.getElementById('helloRobot').innerHTML = "Hi, my name is <b>" + robot.name + "</b> but you can call me Robot number <b>" + robot.number + "</b>. So far I have travelled <b>" + Math.round(robot.metersRun * 10) / 10 + "</b> meters and moved <b>" + robot.movedItems + "</b> racks around this warehouse.";
+        }
+    }
+
     animate = (now) => {
         now *= 0.001;
         const delta = now - this.then;
@@ -72,23 +93,26 @@ export default class World {
 
         let truck = this.scene.getObjectByName("truck");
         if ( truck != undefined && truck.position.z > -10 ) {
-            
             truck.position.z < -9 ? this.truckDockingAudio.play() : null;
-
             let flashingLight = this.scene.getObjectByName("flashingLightPointerObject");
-            if ( flashingLight !== undefined ) {
-                this.flashingLight.t += this.flashingLight.speed * delta
-                const y = 20*Math.cos(this.flashingLight.t)
-                const x = 20*Math.sin(this.flashingLight.t)
-                flashingLight.position.y = y;
-                flashingLight.position.x = x;
-            }
-
+            flashingLight !== undefined ? this.runFlashingLight(delta, flashingLight) : null;
         }
 
+        requestAnimationFrame(this.animate);
+        this.render()
+    }
+
+    render = () => {
         this.cameraControls.update();
         this.renderer.render(this.scene, this.camera);
-        requestAnimationFrame(this.animate);
+    }
+
+    runFlashingLight = (delta, flashingLight) => {
+        this.flashingLight.t += this.flashingLight.speed * delta
+        const y = 20*Math.cos(this.flashingLight.t)
+        const x = 20*Math.sin(this.flashingLight.t)
+        flashingLight.position.y = y;
+        flashingLight.position.x = x;
     }
 
     addObject = (object) => {

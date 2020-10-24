@@ -8,7 +8,7 @@ export default class Skybox extends MovableObject{
             color: 0xffffff,
             side: THREE.BackSide,
             fog: false,
-            map: new THREE.TextureLoader().load("textures/warehouse_skybox.jpg")
+            map: new THREE.TextureLoader().load("textures/hangar_skybox.jpeg")
         })
         let mesh = new THREE.Mesh(geometry, material);
         super(mesh)

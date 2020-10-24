@@ -1,5 +1,15 @@
 package com.nhlstenden.amazonsimulatie.models;
 
+import com.nhlstenden.amazonsimulatie.models.WorldChanges.DropOffRackChange;
+import com.nhlstenden.amazonsimulatie.models.WorldChanges.PickUpRackChange;
+import com.nhlstenden.amazonsimulatie.models.WorldChanges.PositionChange;
+import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
+import com.nhlstenden.amazonsimulatie.models.tasks.DropOffRack;
+import com.nhlstenden.amazonsimulatie.models.tasks.GoToPosition;
+import com.nhlstenden.amazonsimulatie.models.tasks.PickUpRack;
+import com.nhlstenden.amazonsimulatie.models.tasks.Task;
+
 import java.util.*;
 
 /*
@@ -7,19 +17,16 @@ import java.util.*;
  * 3D object is. Ook implementeerd deze class de interface Updatable. Dit is omdat
  * een robot geupdate kan worden binnen de 3D wereld om zich zo voort te bewegen.
  */
-class Robot extends MovableObject implements Object3D, CanHoldRacks {
+public class Robot extends MovableObject implements CanHoldRacks {
     private Rack pickedUpRack = null;
 
-    private Queue<Position> positionsToVisit = new LinkedList<>();
+    private final Queue<Task> tasks = new LinkedList<>();
     private Position latestNodePosition;
 
-    public Robot(double x, double y, double z) {
-        super(x, y, z);
-    }
-
-    public Robot(Position pos)
+    public Robot(Node beginNode)
     {
-        super(pos);
+        super(beginNode.getPosition());
+        latestNodePosition = beginNode.getPosition();
     }
 
     public Robot(double x, double y, double z, Rack pickedUpRack) {
@@ -40,13 +47,39 @@ class Robot extends MovableObject implements Object3D, CanHoldRacks {
      * (Omdat de informatie niet veranderd is, is deze dus ook nog steeds hetzelfde als
      * in de view)
      */
-    public boolean update()
+    public WorldChange update()
     {
+        if (tasks.peek() instanceof DropOffRack) {
+            return dropOffRack((DropOffRack) tasks.poll());
+        }
+        if (tasks.peek() instanceof PickUpRack) {
+            return pickUpRack((PickUpRack) tasks.poll());
+        }
+        if (tasks.peek() instanceof GoToPosition) {
+            return goToPosition((GoToPosition) tasks.peek());
+        }
+
+        return null;
+    }
+
+    public void addTask(Task task) {
+        this.tasks.add(task);
+    }
+
+    public void addTasks(List<Task> tasks) {
+        this.tasks.addAll(tasks);
+    }
+
+    private WorldChange goToPosition(GoToPosition goToPositionTask) {
+
         // Speed of robot is 0.2
-        if (positionsToVisit.isEmpty()) return false;
+        if (goToPositionTask.getNextPosition() == null) {
+            tasks.poll();
+            return null;
+        }
 
         // Here happens the movement of the robot
-        Position goToPosition = positionsToVisit.peek();
+        Position goToPosition = goToPositionTask.getNextPosition();
 
         double differenceX = goToPosition.x - position.x;
         double differenceY = goToPosition.y - position.y;
@@ -56,45 +89,44 @@ class Robot extends MovableObject implements Object3D, CanHoldRacks {
         position.y += positionDifference(differenceY);
         position.z += positionDifference(differenceZ);
 
-        if (goToPosition.x == position.x && goToPosition.y == position.y && goToPosition.z == position.z) {
-            latestNodePosition = positionsToVisit.poll();
+        if (goToPosition.getX() == position.getX() && goToPosition.getY() == position.getY() && goToPosition.getZ() == position.getZ()) {
+            latestNodePosition = goToPositionTask.removeNextPosition();
+            if (goToPositionTask.isFinished()) tasks.poll();
         }
-        return true;
+        return new PositionChange(this);
     }
 
     private double positionDifference(double dif)
     {
         if (dif > 0)
-            if (dif >= 0.2) return 0.2;
+            if (dif > 0.2) return 0.2;
             else return dif;
         if (dif < 0)
-            if (dif <= 0.2) return -0.2;
+            if (dif < 0.2) return -0.2;
             else return dif;
         return 0;
     }
 
-    public void pickUpRack(Rack rack)
+    private WorldChange pickUpRack(PickUpRack pickOffRackTask)
     {
-        rack.setPosition(position.x, position.y, position.z);
+        Rack rack = pickOffRackTask.getRackToPickUp();
         this.pickedUpRack = rack;
+        rack.setHolder(this);
 
+        return new PickUpRackChange(this, rack);
     }
 
-    public Rack dropOffRack()
+    private WorldChange dropOffRack(DropOffRack dropOffRackTask)
     {
         Rack r = this.pickedUpRack;
         this.pickedUpRack = null;
-        return r;
+        r.setHolder(dropOffRackTask.getDropOffPosition());
+
+        return new DropOffRackChange(this, dropOffRackTask.getDropOffPosition(), r);
     }
 
-    public void goToPosition(List<Position> goToPositions)
-    {
-        positionsToVisit.addAll(goToPositions);
-        System.out.println("Hahah" + positionsToVisit.size());
-    }
-
-    public boolean hasReachedPosition() {
-        return positionsToVisit.isEmpty();
+    public boolean finishedAllTasks() {
+        return tasks.isEmpty();
     }
 
     public Position getLatestNodePosition() {
@@ -104,7 +136,6 @@ class Robot extends MovableObject implements Object3D, CanHoldRacks {
     public Rack getRack() {
         return this.pickedUpRack;
     }
-
 
     @Override
     public String getType() {

@@ -1,12 +1,10 @@
-package com.nhlstenden.amazonsimulatie.models.PathFinding;
+package com.nhlstenden.amazonsimulatie.models.pathfinding;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import com.nhlstenden.amazonsimulatie.models.HasPosition;
 import com.nhlstenden.amazonsimulatie.models.Position;
-import com.nhlstenden.amazonsimulatie.models.Rack;
 
 public class Node implements HasPosition {
 

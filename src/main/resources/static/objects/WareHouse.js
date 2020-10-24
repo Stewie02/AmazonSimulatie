@@ -103,7 +103,7 @@ const buildDoor = (doorWidth, doorheight, margin) => {
 const buildDoorButton = (margin) => {
     let group = new THREE.Group();
 
-    const boxWidth = .15
+    const boxWidth = .15;
     const boxGeometry = new THREE.BoxGeometry(.3, .5, boxWidth);
     const boxMaterial = new THREE.MeshStandardMaterial({
         color: 0x999999,
@@ -113,7 +113,7 @@ const buildDoorButton = (margin) => {
     let box = new THREE.Mesh(boxGeometry, boxMaterial);
     box.castShadow = true;
     box.receiveShadow = true;
-    group.add(box)
+    group.add(box);
 
     const radius =  .1;
     const length = .08;
@@ -125,14 +125,14 @@ const buildDoorButton = (margin) => {
         fog: false
     });
     let button = new THREE.Mesh(buttonGeometry, buttonMaterial);
-    button.position.set(0, 0, (length / 2) + (boxWidth /2))
+    button.position.set(0, 0, (length / 2) + (boxWidth /2));
     button.rotation.x = -90 * Math.PI / 180;
     button.castShadow = true;
 
-    group.add(button)
+    group.add(button);
 
-    group.position.set(5, 1.6, (boxWidth / 2) -(margin / 2))
-    return group
+    group.position.set(5, 1.6, (boxWidth / 2) -(margin / 2));
+    return group;
 }
 
 export default class WareHouse extends Object{
@@ -141,21 +141,22 @@ export default class WareHouse extends Object{
         const wallHeight = 10;
         const margin = 5;
 
-        const rackSpots = buildRackpositions(rackPositions);
+        const rackSpots = buildRackpositions( rackPositions );
         group.add(rackSpots.mesh);
         const length = rackSpots.length;
         const width = rackSpots.width;
         
         group.add( buildSpotLights(length, width, wallHeight) );
         group.add( buildWalls(length, wallHeight, width, margin) );
-        group.add( buildDoor(5, 4.5, margin))
-        const flashingLight = new FlashingLight(4.4, 5, -(margin / 2))
-        group.add( flashingLight.mesh )
-        group.add( buildDoorButton(margin) )
-        let walkway = new Walkway(length, width, margin)
-        group.add( walkway.getMesh() )
+        group.add( buildDoor(5, 4.5, margin));
+        const flashingLight = new FlashingLight(4.4, 5, -(margin / 2));
+        group.add( flashingLight.mesh );
+        group.add( buildDoorButton(margin) );
+        let walkway = new Walkway(length, width, margin);
+        group.add( walkway.getMesh() );
 
-        group.uuid = "warehouse"
+        group.name = "warehouse";
+        group.uuid = "warehouse";
         super(group);
 
         this.rackSpots = rackSpots;
