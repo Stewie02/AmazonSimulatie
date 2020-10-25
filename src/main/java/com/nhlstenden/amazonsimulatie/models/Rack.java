@@ -15,6 +15,10 @@ public class Rack {
         this.uuid = UUID.randomUUID();
     }
 
+    public Rack(Position position) {
+        this(position.getX(), position.getY(), position.getZ());
+    }
+
     public Position getPosition() {
         return position;
     }

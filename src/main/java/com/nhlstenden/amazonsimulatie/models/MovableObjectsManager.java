@@ -1,12 +1,11 @@
 package com.nhlstenden.amazonsimulatie.models;
 
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.creators.NodeListCreator;
+import com.nhlstenden.amazonsimulatie.models.creators.TaskCreator;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Dijkstra;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
-import com.nhlstenden.amazonsimulatie.models.tasks.DropOffRack;
-import com.nhlstenden.amazonsimulatie.models.tasks.GoToPosition;
-import com.nhlstenden.amazonsimulatie.models.tasks.PickUpRack;
-import com.nhlstenden.amazonsimulatie.models.tasks.Task;
+import com.nhlstenden.amazonsimulatie.models.tasks.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,10 +26,10 @@ public class MovableObjectsManager {
 
         dijkstra = new Dijkstra(NodeListCreator.createNodeList(rackPositions));
 
-        robots = new Robot[2];
+        robots = new Robot[Constants.AMOUNT_OF_ROBOTS];
         fillRobotArray();
 
-        truck = new Truck();
+        truck = new Truck(rackPositions, dijkstra.getNodes().get(2).getPosition());
 
     }
 
@@ -62,16 +61,39 @@ public class MovableObjectsManager {
             if (worldChange != null) worldChanges.add(worldChange);
             if (object instanceof Robot)
                 if (((Robot) object).finishedAllTasks()) {
-                    ((Robot) object).addTasks(createTasks((Robot)object));
+                    // TODO: Add tasks to the robots
+//                    ((Robot) object).addTasks(createTasks((Robot)object));
                 }
 
         }
         // TODO: Do everything with the robot
         WorldChange truckChange = truck.update();
         if (truckChange != null) worldChanges.add(truckChange);
-        if (truck.tasksAvailable()) truck.redeemTask(truck.getNextTask());
+        if (truck.tasksAvailable()) truck.redeemAssignment(truck.getNextTask());
+
+        if (!truck.tasksAvailable()) {
+            truck.addAssignments(generateNewAssignments());
+        }
+
         return worldChanges;
     }
+
+    private List<Assignment> generateNewAssignments() {
+
+        List<Assignment> assignments = new ArrayList<>();
+
+        for (int i = 0; i < Constants.AMOUNT_OF_ROBOTS; i++)
+        {
+            if (new Random().nextInt(100) < 50) {
+                assignments.add(TaskCreator.createBringToTruckAssignment(rackPositions, truck));
+            }
+            else {
+                assignments.add(TaskCreator.createBringToRackPositionAssignment(rackPositions, truck));
+            }
+        }
+        return assignments;
+    }
+
 
 
     private void fillRobotArray()
@@ -105,45 +127,45 @@ public class MovableObjectsManager {
         }
     }
 
-    private List<Task> createTasks(Robot robot) {
-
-        List<Task> tasks = new ArrayList<>();
-
-        List<Position> path = new ArrayList<>();
-        RackPosition finalPos = null;
-        RackPosition possibility = null;
-        while (finalPos == null)
-        {
-            int randomInt0 = new Random().nextInt(rackPositions.length);
-            int randomInt1 = new Random().nextInt(rackPositions[0].length);
-            possibility = rackPositions[randomInt0][randomInt1];
-            if (possibility.getAdjacentNode() != null && possibility.getRack() != null) finalPos = possibility;
-        }
-        Position surePos = finalPos.getAdjacentNode().getPosition();
-        Rack moving = possibility.getRack();
-        path = dijkstra.giveShortestPath(robot.getLatestNodePosition(), finalPos.getAdjacentNode());
-        GoToPosition goToPosition = new GoToPosition(path);
-
-        tasks.add(goToPosition);
-        tasks.add(new PickUpRack(possibility.getRack()));
-
-        finalPos = null;
-        possibility = null;
-        while (finalPos == null)
-        {
-            int randomInt0 = new Random().nextInt(rackPositions.length);
-            int randomInt1 = new Random().nextInt(rackPositions[0].length);
-            possibility = rackPositions[randomInt0][randomInt1];
-            if (possibility.getAdjacentNode() != null && possibility.getRack() == null) finalPos = possibility;
-        }
-        path = dijkstra.giveShortestPath(surePos, finalPos.getAdjacentNode());
-        goToPosition = new GoToPosition(path);
-        tasks.add(goToPosition);
-        tasks.add(new DropOffRack(moving, possibility));
-
-
-        return tasks;
-    }
+//    private List<Task> createTasks(Robot robot) {
+//
+//        List<Task> tasks = new ArrayList<>();
+//
+//        List<Position> path = new ArrayList<>();
+//        RackPosition finalPos = null;
+//        RackPosition possibility = null;
+//        while (finalPos == null)
+//        {
+//            int randomInt0 = new Random().nextInt(rackPositions.length);
+//            int randomInt1 = new Random().nextInt(rackPositions[0].length);
+//            possibility = rackPositions[randomInt0][randomInt1];
+//            if (possibility.getAdjacentNode() != null && possibility.getRack() != null) finalPos = possibility;
+//        }
+//        Position surePos = finalPos.getAdjacentNode().getPosition();
+//        Rack moving = possibility.getRack();
+//        path = dijkstra.giveShortestPath(robot.getLatestNodePosition(), finalPos.getAdjacentNode());
+//        GoToPosition goToPosition = new GoToPosition(path);
+//
+//        tasks.add(goToPosition);
+//        tasks.add(new PickUpRack(possibility.getRack()));
+//
+//        finalPos = null;
+//        possibility = null;
+//        while (finalPos == null)
+//        {
+//            int randomInt0 = new Random().nextInt(rackPositions.length);
+//            int randomInt1 = new Random().nextInt(rackPositions[0].length);
+//            possibility = rackPositions[randomInt0][randomInt1];
+//            if (possibility.getAdjacentNode() != null && possibility.getRack() == null) finalPos = possibility;
+//        }
+//        path = dijkstra.giveShortestPath(surePos, finalPos.getAdjacentNode());
+//        goToPosition = new GoToPosition(path);
+//        tasks.add(goToPosition);
+//        tasks.add(new DropOffRack(moving, possibility));
+//
+//
+//        return tasks;
+//    }
 
     public List<Node> getNodes()
     {

@@ -63,10 +63,10 @@ public class SimulationController extends Controller {
 
         view.sendRackPositions(this.getModel().getRackPositions());
 
-        for (Node node : this.getModel().getNodes())
-        {
-            view.sendNode("node", node);
-        }
+//        for (Node node : this.getModel().getNodes())
+//        {
+//            view.sendNode("node", node);
+//        }
 
         /*
          * Dit stukje code zorgt ervoor dat wanneer een nieuwe view verbinding maakt, deze view één

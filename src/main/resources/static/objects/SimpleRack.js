@@ -40,7 +40,7 @@ export default class SimpleRack extends MovableObject{
         const trayHeight = [-0.75, -0.3, 0.15, 0.65, 1.1];
         trayHeight.forEach(height => {
             group.add(tray(width, length, height));
-            Math.random() <= 0.5 ?  group.add(cardBoardBox( 0.5, 0.3, 0.5, height, materials.cardBoardBox)) : null ;
+            Math.random() <= 0.3 ?  group.add(cardBoardBox( 0.5, 0.3, 0.5, height, materials.cardBoardBox)) : null ;
         })
         group.name = "simpleRack";
         group.uuid = uuid;
