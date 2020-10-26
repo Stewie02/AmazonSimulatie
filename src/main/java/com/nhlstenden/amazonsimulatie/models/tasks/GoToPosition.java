@@ -1,7 +1,7 @@
 package com.nhlstenden.amazonsimulatie.models.tasks;
 
 import com.nhlstenden.amazonsimulatie.models.Position;
-import com.sun.org.apache.bcel.internal.generic.GotoInstruction;
+import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,14 +10,22 @@ import java.util.Queue;
 public class GoToPosition implements Task {
 
     private final Queue<Position> positionQueue = new LinkedList<>();
-    private final Position finalPosition;
+    private final Node finalNode;
 
 //    public GoToPosition(List<Position> positionList) {
 //        this.positionQueue.addAll(positionList);
 //    }
 
-    public GoToPosition(Position finalPosition) {
-        this.finalPosition = finalPosition;
+    public GoToPosition(Node finalNode) {
+        this.finalNode = finalNode;
+    }
+
+    public Node getFinalNode() {
+        return this.finalNode;
+    }
+
+    public void setRoute(List<Position> route) {
+        positionQueue.addAll(route);
     }
 
     public Position getNextPosition() {

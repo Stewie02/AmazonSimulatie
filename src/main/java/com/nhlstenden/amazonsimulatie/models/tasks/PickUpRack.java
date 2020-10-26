@@ -5,6 +5,7 @@ import com.nhlstenden.amazonsimulatie.models.Rack;
 public class PickUpRack implements Task {
 
     private final Rack rackToPickUp;
+    private boolean needToBuildRack;
 
     public PickUpRack(Rack rackToPickUp) {
         this.rackToPickUp = rackToPickUp;
@@ -12,6 +13,10 @@ public class PickUpRack implements Task {
 
     public Rack getRackToPickUp() {
         return this.rackToPickUp;
+    }
+
+    public void rackNeedsToBuild() {
+
     }
 
     @Override

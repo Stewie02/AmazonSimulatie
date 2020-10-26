@@ -7,7 +7,7 @@ import java.util.UUID;
 public abstract class MovableObject implements Updatable, Object3D {
 
     protected Position position;
-    protected double rotationX, rotationY, rotationZ;
+    private double rotationX, rotationY, rotationZ;
     private UUID uuid;
 
     public MovableObject(double x, double y, double z) {
@@ -27,6 +27,10 @@ public abstract class MovableObject implements Updatable, Object3D {
     }
 
     public abstract WorldChange update();
+
+    public Position getPosition() {
+        return this.position;
+    }
 
     public double getX() {
         return this.position.getX();

@@ -61,22 +61,24 @@ export default class Robot extends MovableObject{
         group.userData.number = robotNumber;
         group.userData.movedItems = 0;
         group.userData.metersRun = 0;
-
-        
-       
+        group.userData.lastMetersRun = 0;
         super(group);
     }
 
     pickUp(object) {
-        this.mesh.userData.movedItems++;
-        object.position.set(0, object.position.y + .3, 0);
-        this.mesh.add(object);
+        if ( this.mesh.children[1] === undefined ) {
+            this.mesh.userData.movedItems++;
+            object.position.set(0, object.position.y + .3, 0);
+            this.mesh.add(object);
+        } else {
+            console.log("[Robot.js pickUp] Robots can only pick up one rack at a time")
+        }
     }
 
     dropOff(world, dropOffPointUuid) {
         const dropable = this.mesh.children[1];
-        if ( dropOffPointUuid != undefined ) {
-            const dropOffPoint = world.scene.getObjectByProperty( 'uuid', dropOffPointUuid);
+        const dropOffPoint = world.scene.getObjectByProperty( 'uuid', dropOffPointUuid);
+        if ( dropOffPointUuid != undefined && dropOffPoint.name != "truck") {
             dropable.position.x = dropOffPoint.position.x;
             dropable.position.y -= 0.3;
             dropable.position.z = dropOffPoint.position.z;

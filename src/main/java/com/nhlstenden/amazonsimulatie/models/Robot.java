@@ -5,10 +5,7 @@ import com.nhlstenden.amazonsimulatie.models.WorldChanges.PickUpRackChange;
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.PositionChange;
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
-import com.nhlstenden.amazonsimulatie.models.tasks.DropOffRack;
-import com.nhlstenden.amazonsimulatie.models.tasks.GoToPosition;
-import com.nhlstenden.amazonsimulatie.models.tasks.PickUpRack;
-import com.nhlstenden.amazonsimulatie.models.tasks.Task;
+import com.nhlstenden.amazonsimulatie.models.tasks.*;
 
 import java.util.*;
 
@@ -20,8 +17,9 @@ import java.util.*;
 public class Robot extends MovableObject implements CanHoldRacks {
     private Rack pickedUpRack = null;
 
-    private final Queue<Task> tasks = new LinkedList<>();
+    private final Queue<Assignment> assignments = new LinkedList<>();
     private Position latestNodePosition;
+    private Assignment lastAssignment = null;
 
     public Robot(Node beginNode)
     {
@@ -49,28 +47,29 @@ public class Robot extends MovableObject implements CanHoldRacks {
      */
     public WorldChange update()
     {
-        if (tasks.peek() instanceof DropOffRack) {
-            return dropOffRack((DropOffRack) tasks.poll());
-        }
-        if (tasks.peek() instanceof PickUpRack) {
-            return pickUpRack((PickUpRack) tasks.poll());
-        }
-        if (tasks.peek() instanceof GoToPosition) {
-            return goToPosition((GoToPosition) tasks.peek());
+        WorldChange worldChange = null;
+        if (!assignments.isEmpty()) {
+            Queue<Task> tasks = assignments.peek().getTasks();
+            if (tasks.peek() instanceof DropOffRack) {
+                worldChange = dropOffRack((DropOffRack) tasks.poll());
+            }
+            if (tasks.peek() instanceof PickUpRack) {
+                worldChange = pickUpRack((PickUpRack) tasks.poll());
+            }
+            if (tasks.peek() instanceof GoToPosition) {
+                worldChange = goToPosition((GoToPosition) tasks.peek(), tasks);
+            }
+            if (tasks.isEmpty()) lastAssignment = assignments.poll();
         }
 
-        return null;
+        return worldChange;
     }
 
-    public void addTask(Task task) {
-        this.tasks.add(task);
+    public void addAssignment(Assignment assignment) {
+        this.assignments.add(assignment);
     }
 
-    public void addTasks(List<Task> tasks) {
-        this.tasks.addAll(tasks);
-    }
-
-    private WorldChange goToPosition(GoToPosition goToPositionTask) {
+    private WorldChange goToPosition(GoToPosition goToPositionTask, Queue<Task> tasks) {
 
         // Speed of robot is 0.2
         if (goToPositionTask.getNextPosition() == null) {
@@ -110,7 +109,9 @@ public class Robot extends MovableObject implements CanHoldRacks {
     private WorldChange pickUpRack(PickUpRack pickOffRackTask)
     {
         Rack rack = pickOffRackTask.getRackToPickUp();
-        this.pickedUpRack = rack;
+        setRack(rack);
+        if (pickOffRackTask.getRackToPickUp().getHolder() != null)
+            pickOffRackTask.getRackToPickUp().getHolder().setRack(null);
         rack.setHolder(this);
 
         return new PickUpRackChange(this, rack);
@@ -119,18 +120,28 @@ public class Robot extends MovableObject implements CanHoldRacks {
     private WorldChange dropOffRack(DropOffRack dropOffRackTask)
     {
         Rack r = this.pickedUpRack;
-        this.pickedUpRack = null;
+        setRack(null);
+        dropOffRackTask.getDropOffPosition().setRack(r);
+        System.out.println(r);
         r.setHolder(dropOffRackTask.getDropOffPosition());
 
         return new DropOffRackChange(this, dropOffRackTask.getDropOffPosition(), r);
     }
 
-    public boolean finishedAllTasks() {
-        return tasks.isEmpty();
+    public boolean finishedAllAssignments() {
+        return assignments.isEmpty();
     }
 
     public Position getLatestNodePosition() {
         return latestNodePosition;
+    }
+
+    public Assignment getLastAssignment() {
+        return lastAssignment;
+    }
+
+    public void setRack(Rack rack) {
+        this.pickedUpRack = rack;
     }
 
     public Rack getRack() {

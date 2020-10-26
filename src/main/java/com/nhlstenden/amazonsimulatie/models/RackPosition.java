@@ -36,7 +36,8 @@ public class RackPosition implements CanHoldRacks, HasPosition {
 
     public void setRack(Rack rack) {
         this.rack = rack;
-        rack.setPosition(position.x, position.y, position.z);
+        if (rack != null)
+            rack.setPosition(position.x, position.y, position.z);
     }
 
     public Node getAdjacentNode() {

@@ -24,10 +24,10 @@ public class TaskCreator {
             rackToPickUp = pickUpPosition.getRack();
             adjacent = pickUpPosition.getAdjacentNode();
         }
-        assignment.addTask(new GoToPosition(pickUpPosition.getPosition()));
+        assignment.addTask(new GoToPosition(pickUpPosition.getAdjacentNode()));
         assignment.addTask(new PickUpRack(rackToPickUp));
-        assignment.addTask(new GoToPosition(truck.getDropOffPosition()));
-        assignment.addTask(new DropOffRack(rackToPickUp, null));
+        assignment.addTask(new GoToPosition(truck.getDropOffNode()));
+        assignment.addTask(new DropOffRack(rackToPickUp, truck));
         return assignment;
     }
 
@@ -35,20 +35,16 @@ public class TaskCreator {
         Assignment assignment = new Assignment();
 
         // TODO: remove adjacent
-        RackPosition randomRackPosition = getRandomRackPosition(rackPositions);
-        Rack rack = randomRackPosition.getRack();
-        Node adjacent = randomRackPosition.getAdjacentNode();
 
-        while (rack != null ||  adjacent == null) {
-            randomRackPosition = getRandomRackPosition(rackPositions);
-            rack = randomRackPosition.getRack();
-            adjacent = randomRackPosition.getAdjacentNode();
+        RackPosition dropOffPosition = getRandomRackPosition(rackPositions);
+        while (dropOffPosition.getRack() != null || dropOffPosition.getAdjacentNode() == null) {
+            dropOffPosition = getRandomRackPosition(rackPositions);
         }
-
-        assignment.addTask(new GoToPosition(truck.getDropOffPosition()));
-        assignment.addTask(new PickUpRack(new Rack(truck.getDropOffPosition())));
-        // TODO: Finish the creator
-
+        Rack newRack = new Rack(truck.getDropOffNode().getPosition());
+        assignment.addTask(new GoToPosition(truck.getDropOffNode()));
+        assignment.addTask(new PickUpRack(newRack));
+        assignment.addTask(new GoToPosition(dropOffPosition.getAdjacentNode()));
+        assignment.addTask(new DropOffRack(newRack, dropOffPosition));
 
         return assignment;
     }

@@ -7,6 +7,7 @@ import com.nhlstenden.amazonsimulatie.base.Command;
 import com.nhlstenden.amazonsimulatie.models.Object3D;
 
 import com.nhlstenden.amazonsimulatie.models.Robot;
+import com.nhlstenden.amazonsimulatie.models.WorldChanges.PickUpRackChange;
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.PositionChange;
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
@@ -71,7 +72,8 @@ public class DefaultWebSocketView implements View {
 
     @Override
     public void sendWorldChange(WorldChange worldChange) {
-        System.out.println("Sending worldchange!!");
+
+        if (worldChange instanceof PickUpRackChange) System.out.println("Picking up");
 
         sendMessage(
                 "{"

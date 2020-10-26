@@ -29,7 +29,7 @@ public class MovableObjectsManager {
         robots = new Robot[Constants.AMOUNT_OF_ROBOTS];
         fillRobotArray();
 
-        truck = new Truck(rackPositions, dijkstra.getNodes().get(2).getPosition());
+        truck = new Truck(rackPositions, dijkstra.getNodes().get(2));
 
     }
 
@@ -60,18 +60,29 @@ public class MovableObjectsManager {
             WorldChange worldChange = object.update();
             if (worldChange != null) worldChanges.add(worldChange);
             if (object instanceof Robot)
-                if (((Robot) object).finishedAllTasks()) {
+                if (((Robot) object).finishedAllAssignments()) {
                     // TODO: Add tasks to the robots
-//                    ((Robot) object).addTasks(createTasks((Robot)object));
+                    truck.redeemAssignment(((Robot) object).getLastAssignment());
+                    if (truck.assignmentsAvailable()) {
+                        Assignment a = truck.getNextAssignment();
+                        if (a != null) {
+                            Position previousPosition = ((Robot) object).getLatestNodePosition();
+                            for (Task task : a.getTasks())
+                                if (task instanceof GoToPosition) {
+                                    ((GoToPosition) task).setRoute(dijkstra.giveShortestPath(previousPosition, ((GoToPosition) task).getFinalNode()));
+                                    previousPosition = ((GoToPosition) task).getFinalNode().getPosition();
+                                }
+                            ((Robot) object).addAssignment(a);
+                        }
+                    }
                 }
-
         }
         // TODO: Do everything with the robot
         WorldChange truckChange = truck.update();
         if (truckChange != null) worldChanges.add(truckChange);
-        if (truck.tasksAvailable()) truck.redeemAssignment(truck.getNextTask());
 
-        if (!truck.tasksAvailable()) {
+        if (truck.timeToAddAssignments()) {
+            System.out.println("Adding assignments");
             truck.addAssignments(generateNewAssignments());
         }
 
@@ -82,7 +93,7 @@ public class MovableObjectsManager {
 
         List<Assignment> assignments = new ArrayList<>();
 
-        for (int i = 0; i < Constants.AMOUNT_OF_ROBOTS; i++)
+        for (int i = 0; i < Constants.AMOUNT_OF_ROBOTS * 2; i++)
         {
             if (new Random().nextInt(100) < 50) {
                 assignments.add(TaskCreator.createBringToTruckAssignment(rackPositions, truck));
@@ -119,7 +130,9 @@ public class MovableObjectsManager {
 
                 Rack r = null;
                 int rand = new Random().nextInt(100);
-                if (rand < 80) r = new Rack(x, 0, z);
+                if (rand < 80) {
+                    r = new Rack(x, 0, z);
+                }
 
                 rackPositions[column][row] = new RackPosition(x, 0.01, z, r);
                 if (r != null) r.setHolder(rackPositions[column][row]);

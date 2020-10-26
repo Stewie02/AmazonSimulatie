@@ -2,6 +2,7 @@ package com.nhlstenden.amazonsimulatie.models.WorldChanges;
 
 import com.nhlstenden.amazonsimulatie.models.Rack;
 import com.nhlstenden.amazonsimulatie.models.Robot;
+import com.nhlstenden.amazonsimulatie.models.tasks.PickUpRack;
 
 public class PickUpRackChange implements WorldChange {
 
@@ -17,6 +18,7 @@ public class PickUpRackChange implements WorldChange {
 
     @Override
     public String getParametersString() {
+
         StringBuilder string = new StringBuilder("{");
         string.append(createKeyValueJSON("robot", robot.getUUID())).append(",");
         string.append(createKeyValueJSON("rack", rack.getUUID()));

@@ -8,7 +8,7 @@ import SimpleRack from './objects/SimpleRack.js';
 import Manager from './objects/imported/Manager/Manager.js';
 import TestNode from './objects/TestNode.js';
 
-let world;
+let world, capacity;
 let robotCount = 1;
 const meshLoader = new PreMeshLoader()
 
@@ -36,13 +36,14 @@ function commandHandler(command) {
             update(command.parameters);
             break;
         case "pick_up":
+            console.log(command);
             pickUp(command.parameters);
             break;
         case "drop_off":
             dropOff(command.parameters);
             break;
         case "node":
-            const node = new TestNode(.2);
+            const node = new TestNode(1);
             const pos = command.parameters;
             node.moveTo(pos.x, pos.y, pos.z);
             world.addObject( node );
@@ -51,6 +52,29 @@ function commandHandler(command) {
             console.log("command did not match");
             break;
     }
+}
+
+function buildWarehouse(parameters) {
+    const warehouse = new WareHouse( parameters );
+    capacity = warehouse.rackSpots.mesh.children.length
+    document.getElementById('capacity').innerText = capacity;
+    warehouse.rackSpots.mesh.children.map(spot => {
+        if (spot.userData.occupied) {
+            build({
+                uuid: spot.userData.uuid,
+                type: "rack",
+                x: spot.position.x,
+                y: 0.85,
+                z: spot.position.z,
+                rotationX: 0,
+                rotationY: 0,
+                rotationZ: 0
+            })
+        }
+    })
+    world.init(warehouse.length, warehouse.width);
+    world.addObject( warehouse );
+    updateDashboard();
 }
 
 async function build(parameters) {
@@ -101,29 +125,8 @@ async function build(parameters) {
     }
 }
 
-function buildWarehouse(parameters) {
-    const warehouse = new WareHouse( parameters );
-    document.getElementById('capacity').innerText = warehouse.rackSpots.mesh.children.length;
-    warehouse.rackSpots.mesh.children.map(spot => {
-        if (spot.userData.occupied) {
-            build({
-                uuid: spot.userData.uuid,
-                type: "rack",
-                x: spot.position.x,
-                y: 0.85,
-                z: spot.position.z,
-                rotationX: 0,
-                rotationY: 0,
-                rotationZ: 0
-            })
-        }
-    })
-    world.init(warehouse.length, warehouse.width);
-    world.addObject( warehouse );
-    updateDashboard();
-}
-
 function update(parameters) {
+    //update meters run
     let object = world.worldObjects[parameters.uuid];
     let x =  object.mesh.position.x - parameters.x;
     let y = object.mesh.position.y - parameters.y;
@@ -132,7 +135,25 @@ function update(parameters) {
     const deltaY = Math.sqrt(y * y);
     const deltaZ = Math.sqrt(z * z);
     object.mesh.userData.metersRun += deltaX + deltaY + deltaZ;
+
+    //build rack if requested
+    if (parameters.rack !== undefined && object.mesh.children[1] === undefined) {
+        build({
+            uuid: parameters.rack,
+            type: "rack",
+            x: 0,
+            y: 0.85,
+            z: 0,
+            rotationX: 0,
+            rotationY: 0,
+            rotationZ: 0
+        })
+        object.pickUp( world.worldObjects[parameters.rack].getMesh() )
+    }
+
+    //update position en rotation
     object.moveTo(parameters.x, parameters.y, parameters.z);
+    object.rotate(parameters.rotationX, parameters.rotationY, parameters.rotationZ);
 }
 
 function pickUp(parameters) {
@@ -140,9 +161,10 @@ function pickUp(parameters) {
 }
 
 function dropOff(parameters) {
-    world.worldObjects[parameters.robot].dropOff(world, parameters.position)
+    world.worldObjects[parameters.robot].dropOff( world, parameters.position )
 }
 
+//frontend
 function toggleDarkMode(event) {
     let walls = world.scene.getObjectByName("walls")
     let buttons = document.getElementsByClassName('tDark');
@@ -183,7 +205,7 @@ function toggleSound(event) {
 }
 
 function toggleRotation(event) {
-    world.cameraControls.autoRotate ? world.cameraControls.autoRotate = false : world.cameraControls.autoRotate = true;
+    world.cameraControls.autoRotate = world.cameraControls.autoRotate ? false : true;
 }
 
 function centerCam(event) {
@@ -196,19 +218,24 @@ function updateDashboard() {
     let htmlRobotsStatus = [];
     Object.keys(world.worldObjects).map(key => {
         const object = world.worldObjects[key].mesh;
+        const metersRun = object.userData.metersRun;
+        let deltaMeters = metersRun - object.userData.lastMetersRun;
+        object.userData.lastMetersRun = metersRun;
+        const kmh = deltaMeters * 3.6;
+        
         switch (object.name) {
             case "simpleRack":
                 racks++;
                 break;
             case "robot":
                 robots++;
-                htmlRobotsStatus.push('<tr><td>'+ object.userData.number +'</td><td>' + Math.round(object.userData.metersRun * 10)/ 10 + '</td><td>'+ object.userData.movedItems +'</td></tr>');
+                htmlRobotsStatus.push('<tr><td>'+ object.userData.number +'</td><td>' + Math.round( kmh * 10)/ 10 + '</td><td>' + Math.round(metersRun * 10)/ 10 + '</td><td>'+ object.userData.movedItems +'</td></tr>');
                 break;    
             default:
                 break;
         }
     })
-
+    document.getElementById('occupationLevel').innerText = Math.round((racks / capacity)*100);
     document.getElementById('nrRacks').innerHTML = racks;
     document.getElementById('nrRobots').innerHTML = robots;
     document.getElementById('robotsStatus').innerHTML = htmlRobotsStatus.join('');

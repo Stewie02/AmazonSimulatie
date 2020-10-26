@@ -2,11 +2,12 @@ package com.nhlstenden.amazonsimulatie.models;
 
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.PositionChange;
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 import com.nhlstenden.amazonsimulatie.models.tasks.*;
 
 import java.util.*;
 
-public class Truck extends MovableObject implements Object3D {
+public class Truck extends MovableObject implements Object3D, CanHoldRacks {
 
     private final Position storagePosition = new Position(2.0, -1.55, -7.0);
     private final Position getNewTaskPosition = new Position(2.0, -1.55, -19);
@@ -14,29 +15,26 @@ public class Truck extends MovableObject implements Object3D {
     private final Queue<Assignment> assignmentsForRobots = new LinkedList<>();
     private final List<Assignment> givenAssignments = new ArrayList<>();
     private final RackPosition[][] rackPositions;
-    private final Position dropOffPosition;
+    private final Node dropOffNode;
 
-    public Truck(RackPosition[][] rackPositions, Position dropOffPosition)
+    public Truck(RackPosition[][] rackPositions, Node dropOffNode)
     {
         super(2.0, -1.55, -19);
         this.rackPositions = rackPositions;
-        this.dropOffPosition = dropOffPosition;
+        this.dropOffNode = dropOffNode;
     }
 
     @Override
     public WorldChange update() {
-        if (!assignmentsForRobots.isEmpty() && positionMatch(position, storagePosition)) {
+        if (!allAssignmentsAreRedeemed() && positionMatch(position, storagePosition)) {
             return null;
         }
-        if (assignmentsForRobots.isEmpty() && !positionMatch(position, getNewTaskPosition)) {
-            driveBackward();
-        }
-        if (assignmentsForRobots.isEmpty() && positionMatch(position, getNewTaskPosition)) {
-            // New assignments will be created.
-            return null;
-        }
-        if (!assignmentsForRobots.isEmpty() && !positionMatch(position, storagePosition)) {
+        //
+        if (!allAssignmentsAreRedeemed() && !positionMatch(position, storagePosition)) {
             driveForward();
+        }
+        if (allAssignmentsAreRedeemed() && !positionMatch(position, getNewTaskPosition)) {
+            driveBackward();
         }
         return new PositionChange(this);
     }
@@ -49,14 +47,23 @@ public class Truck extends MovableObject implements Object3D {
         this.position.setZ(position.getZ() - 0.2);
     }
 
-    public Assignment getNextTask() {
+    public Assignment getNextAssignment() {
         Assignment a = assignmentsForRobots.poll();
-        givenAssignments.add(a);
+        if (a != null)
+            givenAssignments.add(a);
         return a;
     }
 
-    public boolean tasksAvailable() {
+    private boolean allAssignmentsAreRedeemed() {
+        return givenAssignments.isEmpty() && assignmentsForRobots.isEmpty();
+    }
+
+    public boolean assignmentsAvailable() {
         return !assignmentsForRobots.isEmpty() && positionMatch(position, storagePosition);
+    }
+
+    public boolean timeToAddAssignments() {
+        return allAssignmentsAreRedeemed() && positionMatch(position, getNewTaskPosition);
     }
 
     public boolean redeemAssignment(Assignment assignment) {
@@ -72,12 +79,21 @@ public class Truck extends MovableObject implements Object3D {
         return pos1.getX() == pos2.getX() && pos1.getY() == pos2.getY() && pos1.getZ() == pos2.getZ();
     }
 
-    public Position getDropOffPosition() {
-        return this.dropOffPosition;
+    public Node getDropOffNode() {
+        return this.dropOffNode;
     }
 
     @Override
     public String getType() {
         return Truck.class.getSimpleName().toLowerCase();
+    }
+
+    @Override
+    public Rack getRack() {
+        return null;
+    }
+
+    public void setRack(Rack rack) {
+
     }
 }
