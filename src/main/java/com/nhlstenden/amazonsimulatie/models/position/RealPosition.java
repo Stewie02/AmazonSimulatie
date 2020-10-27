@@ -1,24 +1,27 @@
-package com.nhlstenden.amazonsimulatie.models;
+package com.nhlstenden.amazonsimulatie.models.position;
 
-public class Position {
+public class RealPosition implements Position {
 
     public double x, y, z;
 
-    public Position (double x, double y, double z)
+    public RealPosition(double x, double y, double z)
     {
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
+    @Override
     public double getX() {
         return roundThreeDecimals(x);
     }
 
+    @Override
     public double getY() {
         return roundThreeDecimals(y);
     }
 
+    @Override
     public double getZ() {
         return roundThreeDecimals(z);
     }

@@ -1,8 +1,8 @@
 package com.nhlstenden.amazonsimulatie.models.objects;
 
-import com.nhlstenden.amazonsimulatie.models.Position;
-import com.nhlstenden.amazonsimulatie.models.WorldChanges.PositionChange;
-import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.position.RealPosition;
+import com.nhlstenden.amazonsimulatie.models.worldchanges.PositionChange;
+import com.nhlstenden.amazonsimulatie.models.worldchanges.WorldChange;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.CanHoldRacks;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
@@ -12,8 +12,8 @@ import java.util.*;
 
 public class Truck extends MovableObject implements Object3D, CanHoldRacks {
 
-    private final Position storagePosition = new Position(2.0, -1.55, -7.0);
-    private final Position getNewTaskPosition = new Position(2.0, -1.55, -19);
+    private final RealPosition storagePosition = new RealPosition(2.0, -1.55, -7.0);
+    private final RealPosition getNewTaskPosition = new RealPosition(2.0, -1.55, -19);
 
     private final Queue<Assignment> assignmentsForRobots = new LinkedList<>();
     private final List<Assignment> givenAssignments = new ArrayList<>();
@@ -78,7 +78,7 @@ public class Truck extends MovableObject implements Object3D, CanHoldRacks {
     }
 
 
-    private boolean positionMatch(Position pos1, Position pos2) {
+    private boolean positionMatch(RealPosition pos1, RealPosition pos2) {
         return pos1.getX() == pos2.getX() && pos1.getY() == pos2.getY() && pos1.getZ() == pos2.getZ();
     }
 

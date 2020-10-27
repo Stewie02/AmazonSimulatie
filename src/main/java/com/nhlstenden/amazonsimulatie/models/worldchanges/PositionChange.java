@@ -1,4 +1,4 @@
-package com.nhlstenden.amazonsimulatie.models.WorldChanges;
+package com.nhlstenden.amazonsimulatie.models.worldchanges;
 
 import com.nhlstenden.amazonsimulatie.models.objects.MovableObject;
 import com.nhlstenden.amazonsimulatie.models.objects.Robot;

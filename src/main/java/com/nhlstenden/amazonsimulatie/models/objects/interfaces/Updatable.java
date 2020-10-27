@@ -1,6 +1,6 @@
 package com.nhlstenden.amazonsimulatie.models.objects.interfaces;
 
-import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.worldchanges.WorldChange;
 
 /*
  * Deze interface beschrijft wat een onderdeel van het model moet kunnen om deze

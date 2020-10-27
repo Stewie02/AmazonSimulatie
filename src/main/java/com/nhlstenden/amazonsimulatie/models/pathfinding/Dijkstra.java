@@ -1,6 +1,7 @@
 package com.nhlstenden.amazonsimulatie.models.pathfinding;
 
-import com.nhlstenden.amazonsimulatie.models.Position;
+import com.nhlstenden.amazonsimulatie.models.position.Position;
+import com.nhlstenden.amazonsimulatie.models.position.RealPosition;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +35,7 @@ public class Dijkstra {
 
         for (Node node : nodeList)
         {
-            if (node.getPosition() == startNodePosition) {
+            if (node.getX() == startNodePosition.getX() && node.getY() == startNodePosition.getY() && node.getZ() == startNodePosition.getZ()) {
                 startNode = node;
                 break;
             }
@@ -79,8 +80,9 @@ public class Dijkstra {
 
         List<Position> pathToFinish = new ArrayList<>();;
 
-        for (Node node : paths.get(finalNode))
+        for (Node node : paths.get(finalNode)){
             pathToFinish.add(node.getPosition());
+        }
 
         return pathToFinish;
     }

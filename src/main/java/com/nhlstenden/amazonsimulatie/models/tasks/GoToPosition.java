@@ -1,6 +1,6 @@
 package com.nhlstenden.amazonsimulatie.models.tasks;
 
-import com.nhlstenden.amazonsimulatie.models.Position;
+import com.nhlstenden.amazonsimulatie.models.position.Position;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 
 import java.util.LinkedList;

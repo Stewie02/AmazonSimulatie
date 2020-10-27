@@ -7,8 +7,8 @@ import com.nhlstenden.amazonsimulatie.base.Command;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
 
 import com.nhlstenden.amazonsimulatie.models.objects.Robot;
-import com.nhlstenden.amazonsimulatie.models.WorldChanges.PickUpRackChange;
-import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.worldchanges.PickUpRackChange;
+import com.nhlstenden.amazonsimulatie.models.worldchanges.WorldChange;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 import com.nhlstenden.amazonsimulatie.models.objects.RackPosition;
 import org.springframework.web.socket.TextMessage;

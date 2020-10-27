@@ -1,6 +1,8 @@
 package com.nhlstenden.amazonsimulatie.models;
 
-import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.position.Position;
+import com.nhlstenden.amazonsimulatie.models.position.RealPosition;
+import com.nhlstenden.amazonsimulatie.models.worldchanges.WorldChange;
 import com.nhlstenden.amazonsimulatie.models.creators.NodeListCreator;
 import com.nhlstenden.amazonsimulatie.models.creators.WorldObjectsCreator;
 import com.nhlstenden.amazonsimulatie.models.creators.TaskCreator;
@@ -30,7 +32,7 @@ public class MovableObjectsManager {
         dijkstra = new Dijkstra(NodeListCreator.createNodeList(rackPositions));
 
         robots = new Robot[Constants.AMOUNT_OF_ROBOTS];
-        WorldObjectsCreator.createRobots(robots, dijkstra);
+        WorldObjectsCreator.createRobots(robots, dijkstra.getNodes());
 
         truck = new Truck(rackPositions, dijkstra.getNodes().get(2));
     }

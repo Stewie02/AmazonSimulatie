@@ -1,4 +1,4 @@
-package com.nhlstenden.amazonsimulatie.models.WorldChanges;
+package com.nhlstenden.amazonsimulatie.models.worldchanges;
 
 public interface WorldChange {
 

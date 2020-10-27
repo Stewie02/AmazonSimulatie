@@ -1,64 +1,83 @@
 package com.nhlstenden.amazonsimulatie.models.objects;
 
-import com.nhlstenden.amazonsimulatie.models.Position;
-import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.position.Position;
+import com.nhlstenden.amazonsimulatie.models.worldchanges.WorldChange;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Updatable;
 
 import java.util.UUID;
 
-public abstract class MovableObject implements Updatable, Object3D {
+/**
+ * This abstract class is used in an object that moves.
+ * It has all the properties that are used at the client side.
+ */
+public abstract class MovableObject extends HasPosition implements Updatable, Object3D {
 
-    protected Position position;
     private double rotationX, rotationY, rotationZ;
     private UUID uuid;
 
+    /**
+     * This constructor creates a Position object and an UUID
+     * @param x The x location of the object
+     * @param y The y location of the movable object
+     * @param z
+     */
     public MovableObject(double x, double y, double z) {
-        position = new Position(x, y, z);
+        super(x, y, z);
 
         this.uuid = UUID.randomUUID();
     }
 
+    /**
+     * This constructor calls other constructor and gives the values of the given Position
+     * @param pos The starting position of the robot
+     */
     public MovableObject(Position pos) {
-        position = new Position(pos.getX(), pos.getY(), pos.getZ());
-
-        this.uuid = UUID.randomUUID();
+        this(pos.getX(), pos.getY(), pos.getZ());
     }
 
+    /**
+     * Returns the robot UUID
+     * @return The UUID of the robot
+     */
     public String getUUID() {
         return this.uuid.toString();
     }
 
+    /**
+     * In this function happens all the movement of the robot per frame
+     * @return The change of the World after the function call
+     */
     public abstract WorldChange update();
 
-    public Position getPosition() {
-        return this.position;
-    }
-
-    public double getX() {
-        return this.position.getX();
-    }
-
-    public double getY() {
-        return this.position.getY();
-    }
-
-    public double getZ() {
-        return this.position.getZ();
-    }
-
+    /**
+     * This function return the rotation around the X-axis
+     * @return the rotation around the X-axis
+     */
     public double getRotationX() {
         return this.rotationX;
     }
 
+    /**
+     * This function return the rotation around the Y-axis
+     * @return the rotation around the Y-axis
+     */
     public double getRotationY() {
         return this.rotationY;
     }
 
+    /**
+     * This function return the rotation around the Z-axis
+     * @return the rotation around the Z-axis
+     */
     public double getRotationZ() {
         return this.rotationZ;
     }
 
+    /**
+     * Returns the type of the object
+     * @return The object type
+     */
     public abstract String getType();
 
 }

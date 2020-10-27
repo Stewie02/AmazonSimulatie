@@ -3,62 +3,61 @@ package com.nhlstenden.amazonsimulatie.models.objects;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
 
 /*
- * Deze class wordt gebruikt om informatie van het model aan de view te kunnen geven. Dit
- * gaat via het zogenaamde proxy design pattern. Een proxy pattern is een manier om alleen
- * de getters van een object open te stellen voor andere objecten, maar de setters niet.
- * Hieronder zie je dat ook gebeuren. De class ProxyObject3D implementeerd wel de Object3D
- * interface, maar verwijsd door naar een Object3D dat hij binnen in zich houdt. Dit
- * Object3D, met de naam object (zie code hier direct onder), kan in principe van alles zijn.
- * Dat object kan ook setters hebben of een updatemethode, etc. Deze methoden mag de view niet
- * aanroepen, omdat de view dan direct het model veranderd. Dat is niet toegestaan binnen onze
- * implementatie van MVC. Op deze manier beschermen we daartegen, omdat de view alleen maar ProxyObject3D
- * objecten krijgt. Hiermee garanderen we dat de view dus alleen objecten krijgt die alleen maar getters
- * hebben. Zouden we dit niet doen, en bijvoorbeeld een Robot object aan de view geven, dan zouden er
- * mogelijkheden kunnen zijn zodat de view toch bij de updatemethode van de robot kan komen. Deze mag
- * alleen de World class aanroepen, dus dat zou onveilige software betekenen.
+ * This is a proxy class of the Object3D
+ * We make sure nobody can this the object with this class!!!
  */
-public class ProxyObject3D implements Object3D {
+public class ProxyObject3D extends HasPosition implements Object3D {
     private final Object3D object;
 
+    /**
+     * Takes in the object and stores it in the object variable
+     * @param object the Object3D that is going to be the proxy object
+     */
     public ProxyObject3D(Object3D object) {
+        super(object.getX(), object.getY(), object.getZ());
         this.object = object;
     }
 
+    /**
+     * Returns the UUID of the object
+     * @return the UUID
+     */
     @Override
     public String getUUID() {
         return this.object.getUUID();
     }
 
+    /**
+     * Returns the type of the object
+     * @return the type
+     */
     @Override
     public String getType() {
         return this.object.getType();
     }
 
-    @Override
-    public double getX() {
-        return this.object.getX();
-    }
-
-    @Override
-    public double getY() {
-        return this.object.getY();
-    }
-
-    @Override
-    public double getZ() {
-        return this.object.getZ();
-    }
-
+    /**
+     * Returns the rotation around the X-axis of the object
+     * @return the rotation around the X-axis
+     */
     @Override
     public double getRotationX() {
         return this.object.getRotationX();
     }
 
+    /**
+     * Returns the rotation around the Y-axis of the object
+     * @return the rotation around the Y-axis
+     */
     @Override
     public double getRotationY() {
         return this.object.getRotationY();
     }
 
+    /**
+     * Returns the rotation around the Z-axis of the object
+     * @return the rotation around the Z-axis
+     */
     @Override
     public double getRotationZ() {
         return this.object.getRotationZ();

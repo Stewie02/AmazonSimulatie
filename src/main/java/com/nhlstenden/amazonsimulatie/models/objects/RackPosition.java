@@ -1,52 +1,79 @@
 package com.nhlstenden.amazonsimulatie.models.objects;
 
-import com.nhlstenden.amazonsimulatie.models.Position;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.CanHoldRacks;
-import com.nhlstenden.amazonsimulatie.models.objects.interfaces.HasPosition;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 
 import java.util.UUID;
 
-public class RackPosition implements CanHoldRacks, HasPosition {
+/**
+ * A RackPosition is a place in the warehouse where a Rack can stand
+ */
+public class RackPosition extends HasPosition implements CanHoldRacks {
 
-    private final Position position;
     private Rack rack = null;
     private final UUID uuid;
     private Node adjacentNode = null;
 
+    /**
+     * Creates the Position of the RackPosition and sets the given Rack
+     * @param x The X-coordinate of the RackPosition
+     * @param y The Y-coordinate of the RackPosition
+     * @param z The Z-coordinate of the RackPosition
+     * @param rack The Rack which the RackPosition is holding
+     */
     public RackPosition(double x, double y, double z, Rack rack) {
         this(x, y, z);
         this.rack = rack;
     }
 
+    /**
+     * Creates the Position of the RackPosition
+     * @param x The X-coordinate of the RackPosition
+     * @param y The Y-coordinate of the RackPosition
+     * @param z The Z-coordinate of the RackPosition
+     */
     public RackPosition(double x, double y, double z) {
-        this.position = new Position(x, y, z);
+        super(x, y, z);
         this.uuid = UUID.randomUUID();
     }
 
-    public Position getPosition() {
-        return position;
-    }
-
+    /**
+     * Returns the Rack that the RackPosition holds
+     * @return The holding Rack
+     */
     public Rack getRack() {
         return rack;
     }
 
+    /**
+     * Returns the UUID of the RackPosition
+     * @return The UUID
+     */
     public String getUUID()
     {
         return this.uuid.toString();
     }
 
+    /**
+     * Sets the Rack of the RackPosition
+     * @param rack Rack that the RackPosition now holds
+     */
     public void setRack(Rack rack) {
         this.rack = rack;
-        if (rack != null)
-            rack.setPosition(position.x, position.y, position.z);
     }
 
+    /**
+     * Returns the adjacent Node of the RackPosition
+     * @return Adjacent Node
+     */
     public Node getAdjacentNode() {
         return adjacentNode;
     }
 
+    /**
+     * Sets the adjacent Node of the RackPosition
+     * @param adjacentNode The adjacent node of the RackPosition
+     */
     public void setAdjacentNode(Node adjacentNode) {
         this.adjacentNode = adjacentNode;
     }

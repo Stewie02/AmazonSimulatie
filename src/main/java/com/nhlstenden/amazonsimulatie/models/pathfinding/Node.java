@@ -3,17 +3,15 @@ package com.nhlstenden.amazonsimulatie.models.pathfinding;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nhlstenden.amazonsimulatie.models.objects.interfaces.HasPosition;
-import com.nhlstenden.amazonsimulatie.models.Position;
+import com.nhlstenden.amazonsimulatie.models.objects.HasPosition;
 
-public class Node implements HasPosition {
+public class Node extends HasPosition {
 
-    private final Position position;
     private final List<Node> adjacents;
 
     public Node(double x, double y, double z)
     {
-        this.position = new Position(x, y, z);
+        super(x, y, z);
         adjacents = new ArrayList<>();
     }
 
@@ -27,8 +25,4 @@ public class Node implements HasPosition {
         return adjacents.contains(node);
     }
 
-    @Override
-    public Position getPosition() {
-        return position;
-    }
 }

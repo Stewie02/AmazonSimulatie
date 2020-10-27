@@ -1,10 +1,11 @@
 package com.nhlstenden.amazonsimulatie.models.objects;
 
-import com.nhlstenden.amazonsimulatie.models.Position;
-import com.nhlstenden.amazonsimulatie.models.WorldChanges.DropOffRackChange;
-import com.nhlstenden.amazonsimulatie.models.WorldChanges.PickUpRackChange;
-import com.nhlstenden.amazonsimulatie.models.WorldChanges.PositionChange;
-import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.position.Position;
+import com.nhlstenden.amazonsimulatie.models.position.RealPosition;
+import com.nhlstenden.amazonsimulatie.models.worldchanges.DropOffRackChange;
+import com.nhlstenden.amazonsimulatie.models.worldchanges.PickUpRackChange;
+import com.nhlstenden.amazonsimulatie.models.worldchanges.PositionChange;
+import com.nhlstenden.amazonsimulatie.models.worldchanges.WorldChange;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.CanHoldRacks;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 import com.nhlstenden.amazonsimulatie.models.tasks.*;
@@ -83,9 +84,9 @@ public class Robot extends MovableObject implements CanHoldRacks {
         // Here happens the movement of the robot
         Position goToPosition = goToPositionTask.getNextPosition();
 
-        double differenceX = goToPosition.x - position.x;
-        double differenceY = goToPosition.y - position.y;
-        double differenceZ = goToPosition.z - position.z;
+        double differenceX = goToPosition.getX() - position.getX();
+        double differenceY = goToPosition.getY() - position.getY();
+        double differenceZ = goToPosition.getZ() - position.getZ();
 
         position.x += positionDifference(differenceX);
         position.y += positionDifference(differenceY);
@@ -123,6 +124,7 @@ public class Robot extends MovableObject implements CanHoldRacks {
 
     private WorldChange dropOffRack(DropOffRack dropOffRackTask)
     {
+        System.out.println(this.pickedUpRack);
         Rack r = this.pickedUpRack;
         setRack(null);
         dropOffRackTask.getDropOffPosition().setRack(r);
