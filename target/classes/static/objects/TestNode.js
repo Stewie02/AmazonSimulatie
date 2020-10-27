@@ -3,9 +3,9 @@ import MovableObject from './super/MovableObject.js';
 
 export default class TestNode extends MovableObject{
     constructor(diameter){
-        const geometry = new THREE.SphereGeometry(diameter, 32, 32);
+        const geometry = new THREE.SphereGeometry(diameter / 8, 32, 32);
         const material = new THREE.MeshBasicMaterial( { 
-            color: 0xffffff,
+            color: 0x0,
             side: THREE.DoubleSide,
             fog: false,
         })

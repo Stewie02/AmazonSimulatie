@@ -4,8 +4,8 @@ import java.beans.PropertyChangeEvent;
 import java.util.List;
 
 import com.nhlstenden.amazonsimulatie.base.Command;
-import com.nhlstenden.amazonsimulatie.models.Model;
-import com.nhlstenden.amazonsimulatie.models.Object3D;
+import com.nhlstenden.amazonsimulatie.models.World;
+import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 import com.nhlstenden.amazonsimulatie.views.View;
@@ -17,8 +17,8 @@ import com.nhlstenden.amazonsimulatie.views.View;
  */
 public class SimulationController extends Controller {
 
-    public SimulationController(Model model) {
-        super(model); //Met dit onderdeel roep je de constructor aan van de superclass (Controller)
+    public SimulationController(World world) {
+        super(world); //Met dit onderdeel roep je de constructor aan van de superclass (Controller)
     }
 
     /*
@@ -32,10 +32,10 @@ public class SimulationController extends Controller {
     @Override
     public void run() {
         while (true) {
-            sendWorldChange(this.getModel().newUpdate());
+            sendWorldChange(this.getWorld().newUpdate());
 
             try {
-                Thread.sleep(100);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -61,20 +61,20 @@ public class SimulationController extends Controller {
             }
         });
 
-        view.sendRackPositions(this.getModel().getRackPositions());
+        view.sendRackPositions(this.getWorld().getRackPositions());
 
-//        for (Node node : this.getModel().getNodes())
-//        {
-//            view.sendNode("node", node);
-//        }
+        for (Node node : this.world.getNodes())
+        {
+            view.sendNode("node", node);
+        }
 
         /*
          * Dit stukje code zorgt ervoor dat wanneer een nieuwe view verbinding maakt, deze view één
          * keer alle objecten krijgt toegestuurd, ook als deze objecten niet updaten. Zo voorkom je
          * dat de view alleen objecten ziet die worden geupdate (bijvoorbeeld bewegen).
          */
-        for (Object3D object : this.getModel().getWorldObjectsAsList()) {
-            view.update(Model.BUILD_COMMAND, object);
+        for (Object3D object : this.getWorld().getWorldObjectsAsList()) {
+            view.update("build", object);
         }
     }
 

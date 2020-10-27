@@ -1,6 +1,8 @@
 package com.nhlstenden.amazonsimulatie.models;
 
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
+import com.nhlstenden.amazonsimulatie.models.objects.RackPosition;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 
 import java.beans.PropertyChangeListener;
@@ -14,7 +16,7 @@ import java.util.List;
  * de logica die van toepassing is op het domein dat de applicatie modelleerd, staat
  * in het model. Dit betekent dus de logica die het magazijn simuleert.
  */
-public class World implements Model {
+public class World {
     /*
      * De wereld bestaat uit objecten, vandaar de naam worldObjects. Dit is een lijst
      * van alle objecten in de 3D wereld. Deze objecten zijn in deze voorbeeldcode alleen
@@ -48,7 +50,6 @@ public class World implements Model {
      * is het onderdeel niet veranderd en hoeft er dus ook geen signaal naar de controller verstuurd
      * te worden.
      */
-    @Override
     public void update() {
 //        List<WorldChange> worldChanges = this.movableObjectsManager.update();
 //        for (WorldChange change : worldChanges)
@@ -72,7 +73,6 @@ public class World implements Model {
     /*
      * Standaardfunctionaliteit. Hoeft niet gewijzigd te worden.
      */
-    @Override
     public void addObserver(PropertyChangeListener pcl) {
         pcs.addPropertyChangeListener(pcl);
     }
@@ -82,7 +82,6 @@ public class World implements Model {
      * van ProxyObject3D objecten, voor de veiligheid. Zo kan de informatie wel worden gedeeld, maar
      * kan er niks aangepast worden.
      */
-    @Override
     public List<Object3D> getWorldObjectsAsList() {
         return movableObjectsManager.getMovableObjectsAsList();
     }

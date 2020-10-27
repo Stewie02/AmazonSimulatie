@@ -1,8 +1,7 @@
 package com.nhlstenden.amazonsimulatie.models.WorldChanges;
 
-import com.nhlstenden.amazonsimulatie.models.Rack;
-import com.nhlstenden.amazonsimulatie.models.Robot;
-import com.nhlstenden.amazonsimulatie.models.tasks.PickUpRack;
+import com.nhlstenden.amazonsimulatie.models.objects.Rack;
+import com.nhlstenden.amazonsimulatie.models.objects.Robot;
 
 public class PickUpRackChange implements WorldChange {
 

@@ -1,9 +1,11 @@
-package com.nhlstenden.amazonsimulatie.models;
+package com.nhlstenden.amazonsimulatie.models.objects;
 
+import com.nhlstenden.amazonsimulatie.models.Position;
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.DropOffRackChange;
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.PickUpRackChange;
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.PositionChange;
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.objects.interfaces.CanHoldRacks;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 import com.nhlstenden.amazonsimulatie.models.tasks.*;
 
@@ -114,6 +116,7 @@ public class Robot extends MovableObject implements CanHoldRacks {
         if (pickOffRackTask.getRackToPickUp().getHolder() != null)
             pickOffRackTask.getRackToPickUp().getHolder().setRack(null);
         rack.setHolder(this);
+        rack.setAvailability(false);
 
         return new PickUpRackChange(this, rack);
     }
@@ -123,7 +126,7 @@ public class Robot extends MovableObject implements CanHoldRacks {
         Rack r = this.pickedUpRack;
         setRack(null);
         dropOffRackTask.getDropOffPosition().setRack(r);
-        System.out.println(r);
+        r.setAvailability(true);
         r.setHolder(dropOffRackTask.getDropOffPosition());
 
         return new DropOffRackChange(this, dropOffRackTask.getDropOffPosition(), r);

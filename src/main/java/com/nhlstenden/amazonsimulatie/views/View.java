@@ -1,10 +1,10 @@
 package com.nhlstenden.amazonsimulatie.views;
 
 import com.nhlstenden.amazonsimulatie.base.Command;
-import com.nhlstenden.amazonsimulatie.models.Object3D;
+import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
-import com.nhlstenden.amazonsimulatie.models.RackPosition;
+import com.nhlstenden.amazonsimulatie.models.objects.RackPosition;
 
 import java.util.List;
 

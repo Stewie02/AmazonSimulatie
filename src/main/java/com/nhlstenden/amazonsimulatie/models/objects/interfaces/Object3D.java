@@ -1,4 +1,4 @@
-package com.nhlstenden.amazonsimulatie.models;
+package com.nhlstenden.amazonsimulatie.models.objects.interfaces;
 
 /*
  * Deze interface beschrijft wat een 3D model is. Het is een interface omdat alleen de

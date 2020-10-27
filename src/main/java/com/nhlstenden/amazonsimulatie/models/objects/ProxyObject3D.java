@@ -1,4 +1,6 @@
-package com.nhlstenden.amazonsimulatie.models;
+package com.nhlstenden.amazonsimulatie.models.objects;
+
+import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
 
 /*
  * Deze class wordt gebruikt om informatie van het model aan de view te kunnen geven. Dit
@@ -16,7 +18,7 @@ package com.nhlstenden.amazonsimulatie.models;
  * alleen de World class aanroepen, dus dat zou onveilige software betekenen.
  */
 public class ProxyObject3D implements Object3D {
-    private Object3D object;
+    private final Object3D object;
 
     public ProxyObject3D(Object3D object) {
         this.object = object;

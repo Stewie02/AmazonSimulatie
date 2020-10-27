@@ -1,7 +1,7 @@
 package com.nhlstenden.amazonsimulatie.models.WorldChanges;
 
-import com.nhlstenden.amazonsimulatie.models.MovableObject;
-import com.nhlstenden.amazonsimulatie.models.Robot;
+import com.nhlstenden.amazonsimulatie.models.objects.MovableObject;
+import com.nhlstenden.amazonsimulatie.models.objects.Robot;
 
 public class PositionChange implements WorldChange {
     

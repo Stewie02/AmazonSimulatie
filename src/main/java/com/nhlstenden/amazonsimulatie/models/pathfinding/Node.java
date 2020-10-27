@@ -3,7 +3,7 @@ package com.nhlstenden.amazonsimulatie.models.pathfinding;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nhlstenden.amazonsimulatie.models.HasPosition;
+import com.nhlstenden.amazonsimulatie.models.objects.interfaces.HasPosition;
 import com.nhlstenden.amazonsimulatie.models.Position;
 
 public class Node implements HasPosition {

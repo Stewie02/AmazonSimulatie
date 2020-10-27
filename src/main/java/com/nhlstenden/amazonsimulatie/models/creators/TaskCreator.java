@@ -1,14 +1,12 @@
 package com.nhlstenden.amazonsimulatie.models.creators;
 
 import com.nhlstenden.amazonsimulatie.models.Constants;
-import com.nhlstenden.amazonsimulatie.models.Rack;
-import com.nhlstenden.amazonsimulatie.models.RackPosition;
-import com.nhlstenden.amazonsimulatie.models.Truck;
+import com.nhlstenden.amazonsimulatie.models.objects.Rack;
+import com.nhlstenden.amazonsimulatie.models.objects.RackPosition;
+import com.nhlstenden.amazonsimulatie.models.objects.Truck;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 import com.nhlstenden.amazonsimulatie.models.tasks.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class TaskCreator {
@@ -19,7 +17,7 @@ public class TaskCreator {
         RackPosition pickUpPosition = null;
         // TODO:  Remove the adjacent bit!!!
         Node adjacent = null;
-        while (rackToPickUp == null || adjacent == null) {
+        while (rackToPickUp == null || adjacent == null || !rackToPickUp.isAvailable()) {
             pickUpPosition = getRandomRackPosition(rackPositions);
             rackToPickUp = pickUpPosition.getRack();
             adjacent = pickUpPosition.getAdjacentNode();

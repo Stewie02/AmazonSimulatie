@@ -1,4 +1,6 @@
-package com.nhlstenden.amazonsimulatie.models;
+package com.nhlstenden.amazonsimulatie.models.objects.interfaces;
+
+import com.nhlstenden.amazonsimulatie.models.objects.Rack;
 
 public interface CanHoldRacks {
 

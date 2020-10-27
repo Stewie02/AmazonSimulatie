@@ -1,4 +1,4 @@
-package com.nhlstenden.amazonsimulatie.models;
+package com.nhlstenden.amazonsimulatie.models.objects.interfaces;
 
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
 
@@ -9,6 +9,6 @@ import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
  * interface implementeerd. Als dat zo is, wordt het object geupdate wanneer de
  * wereld update.
  */
-interface Updatable {
+public interface Updatable {
     WorldChange update();
 }

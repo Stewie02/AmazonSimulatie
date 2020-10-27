@@ -4,14 +4,13 @@ import java.io.IOException;
 import java.util.List;
 
 import com.nhlstenden.amazonsimulatie.base.Command;
-import com.nhlstenden.amazonsimulatie.models.Object3D;
+import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
 
-import com.nhlstenden.amazonsimulatie.models.Robot;
+import com.nhlstenden.amazonsimulatie.models.objects.Robot;
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.PickUpRackChange;
-import com.nhlstenden.amazonsimulatie.models.WorldChanges.PositionChange;
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
-import com.nhlstenden.amazonsimulatie.models.RackPosition;
+import com.nhlstenden.amazonsimulatie.models.objects.RackPosition;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 

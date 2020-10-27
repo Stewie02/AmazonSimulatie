@@ -1,7 +1,7 @@
 package com.nhlstenden.amazonsimulatie.models.creators;
 
 import com.nhlstenden.amazonsimulatie.models.Constants;
-import com.nhlstenden.amazonsimulatie.models.RackPosition;
+import com.nhlstenden.amazonsimulatie.models.objects.RackPosition;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 
 import java.util.ArrayList;

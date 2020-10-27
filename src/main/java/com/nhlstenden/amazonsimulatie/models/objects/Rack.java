@@ -1,4 +1,7 @@
-package com.nhlstenden.amazonsimulatie.models;
+package com.nhlstenden.amazonsimulatie.models.objects;
+
+import com.nhlstenden.amazonsimulatie.models.Position;
+import com.nhlstenden.amazonsimulatie.models.objects.interfaces.CanHoldRacks;
 
 import java.util.UUID;
 
@@ -8,6 +11,7 @@ public class Rack {
     private UUID uuid;
     private final Position position;
     private CanHoldRacks holder;
+    private boolean isAvailable = true;
 
     public Rack(double x, double y, double z)
     {
@@ -41,4 +45,13 @@ public class Rack {
     {
         this.holder = holder;
     }
+
+    public boolean isAvailable() {
+        return this.isAvailable;
+    }
+
+    public void setAvailability(boolean availability) {
+        this.isAvailable = availability;
+    }
+
 }

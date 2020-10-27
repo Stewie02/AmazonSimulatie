@@ -1,6 +1,9 @@
-package com.nhlstenden.amazonsimulatie.models;
+package com.nhlstenden.amazonsimulatie.models.objects;
 
+import com.nhlstenden.amazonsimulatie.models.Position;
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
+import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Updatable;
 
 import java.util.UUID;
 

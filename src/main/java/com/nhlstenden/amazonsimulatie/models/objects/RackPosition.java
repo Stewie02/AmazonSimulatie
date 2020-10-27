@@ -1,5 +1,8 @@
-package com.nhlstenden.amazonsimulatie.models;
+package com.nhlstenden.amazonsimulatie.models.objects;
 
+import com.nhlstenden.amazonsimulatie.models.Position;
+import com.nhlstenden.amazonsimulatie.models.objects.interfaces.CanHoldRacks;
+import com.nhlstenden.amazonsimulatie.models.objects.interfaces.HasPosition;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 
 import java.util.UUID;

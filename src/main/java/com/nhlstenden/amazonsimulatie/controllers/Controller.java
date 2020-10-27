@@ -4,7 +4,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nhlstenden.amazonsimulatie.models.Model;
+import com.nhlstenden.amazonsimulatie.models.World;
 import com.nhlstenden.amazonsimulatie.views.View;
 
 /*
@@ -18,15 +18,15 @@ import com.nhlstenden.amazonsimulatie.views.View;
  */
 public abstract class Controller implements Runnable, PropertyChangeListener {
     private final List<View> views;
-    protected Model model;
+    protected World world;
 
-    public Controller(Model model) {
+    public Controller(World model) {
         this(model, new ArrayList<View>());
     }
 
-    public Controller(Model model, List<View> views) {
-        this.model = model;
-        this.model.addObserver(this); //Automatisch wordt deze controller toegevoegd aan het model om updates te ontvangen.
+    public Controller(World model, List<View> views) {
+        this.world = model;
+        this.world.addObserver(this); //Automatisch wordt deze controller toegevoegd aan het model om updates te ontvangen.
         this.views = new ArrayList<>(views);
     }
 
@@ -63,8 +63,8 @@ public abstract class Controller implements Runnable, PropertyChangeListener {
      * Returns the internal model used by the controller.
      * @return The internal model.
      */
-    protected Model getModel() {
-        return this.model;
+    protected World getWorld() {
+        return this.world;
     }
 
     /**

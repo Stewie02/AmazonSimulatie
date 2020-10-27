@@ -1,6 +1,6 @@
 package com.nhlstenden.amazonsimulatie.models.tasks;
 
-import com.nhlstenden.amazonsimulatie.models.Rack;
+import com.nhlstenden.amazonsimulatie.models.objects.Rack;
 
 public class PickUpRack implements Task {
 

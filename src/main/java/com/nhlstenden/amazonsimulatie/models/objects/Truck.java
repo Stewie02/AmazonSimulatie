@@ -1,7 +1,10 @@
-package com.nhlstenden.amazonsimulatie.models;
+package com.nhlstenden.amazonsimulatie.models.objects;
 
+import com.nhlstenden.amazonsimulatie.models.Position;
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.PositionChange;
 import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.objects.interfaces.CanHoldRacks;
+import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 import com.nhlstenden.amazonsimulatie.models.tasks.*;
 

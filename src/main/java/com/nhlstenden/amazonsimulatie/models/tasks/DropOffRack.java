@@ -1,7 +1,7 @@
 package com.nhlstenden.amazonsimulatie.models.tasks;
 
-import com.nhlstenden.amazonsimulatie.models.CanHoldRacks;
-import com.nhlstenden.amazonsimulatie.models.Rack;
+import com.nhlstenden.amazonsimulatie.models.objects.interfaces.CanHoldRacks;
+import com.nhlstenden.amazonsimulatie.models.objects.Rack;
 
 public class DropOffRack implements Task {
 

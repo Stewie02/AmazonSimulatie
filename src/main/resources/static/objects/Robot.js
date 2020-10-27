@@ -21,41 +21,8 @@ export default class Robot extends MovableObject{
         group.name = "robot";
         group.uuid = uuid;
 
-        let callName = "Robert"
-        switch (robotNumber) {
-            case 1:
-                callName = "John"
-                break;
-            case 2:
-                callName = "Todd"
-                break;
-            case 3:
-                callName = "Suzanne"
-                break;   
-            case 4:
-                callName = "Nigel"
-                break;   
-            case 5:
-                callName = "Tyler"
-                break;   
-            case 6:
-                callName = "Alice"
-                break;  
-            case 7:
-                callName = "Arnold"
-                break;   
-            case 8:
-                callName = "Frank"
-                break;   
-            case 9:
-                callName = "Tony"
-                break;   
-            case 10:
-                callName = "Rick"
-                break;    
-            default:
-                break;
-        }
+        const names = ['John', 'Todd', 'Suzanne', 'Nigel', 'Tyler', 'Alice', 'Arnold', 'Frank', 'Tony', 'Rick'];
+        let callName = names[robotNumber - 1];
 
         group.userData.name = callName;
         group.userData.number = robotNumber;
