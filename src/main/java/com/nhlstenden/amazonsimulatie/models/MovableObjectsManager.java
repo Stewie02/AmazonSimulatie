@@ -93,7 +93,7 @@ public class MovableObjectsManager {
 
         List<Assignment> assignments = new ArrayList<>();
 
-        for (int i = 0; i < Constants.AMOUNT_OF_ROBOTS * 2; i++)
+        for (int i = 0; i < Constants.AMOUNT_OF_ROBOTS * 4; i++)
         {
             if (new Random().nextInt(100) < 50) {
                 assignments.add(TaskCreator.createBringToTruckAssignment(rackPositions, truck));

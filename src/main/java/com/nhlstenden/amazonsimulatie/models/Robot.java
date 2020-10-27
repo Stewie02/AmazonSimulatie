@@ -51,17 +51,18 @@ public class Robot extends MovableObject implements CanHoldRacks {
         if (!assignments.isEmpty()) {
             Queue<Task> tasks = assignments.peek().getTasks();
             if (tasks.peek() instanceof DropOffRack) {
-                worldChange = dropOffRack((DropOffRack) tasks.poll());
+                worldChange = dropOffRack((DropOffRack) tasks.peek());
             }
             if (tasks.peek() instanceof PickUpRack) {
-                worldChange = pickUpRack((PickUpRack) tasks.poll());
+                worldChange = pickUpRack((PickUpRack) tasks.peek());
             }
             if (tasks.peek() instanceof GoToPosition) {
                 worldChange = goToPosition((GoToPosition) tasks.peek(), tasks);
             }
+            if (worldChange instanceof DropOffRackChange || worldChange instanceof PickUpRackChange)
+                tasks.poll();
             if (tasks.isEmpty()) lastAssignment = assignments.poll();
         }
-
         return worldChange;
     }
 
