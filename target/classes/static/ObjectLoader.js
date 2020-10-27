@@ -3,6 +3,11 @@ import {GLTFLoader} from 'https://threejsfundamentals.org/threejs/resources/thre
 import {MTLLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r119/examples/jsm/loaders/MTLLoader.js';
 import {MtlObjBridge} from 'https://threejsfundamentals.org/threejs/resources/threejs/r119/examples/jsm/loaders/obj2/bridge/MtlObjBridge.js';
 
+/**
+ * For loading .obj and .mtl 3d objects.
+ * @param {String} pathObj 
+ * @param {String} pathMtl 
+ */
 function loadOBJMTL( pathObj, pathMtl ) {
     return new Promise(function(resolve){
         const mtlLoader = new MTLLoader();
@@ -17,6 +22,10 @@ function loadOBJMTL( pathObj, pathMtl ) {
     });
 }
 
+/**
+ * For loading .obj 3d objects.
+ * @param {String} path 
+ */
 function loadOBJ( path ) {
     return new Promise(function(resolve){
         const objLoader = new OBJLoader2();
@@ -26,6 +35,10 @@ function loadOBJ( path ) {
     })
 }
 
+/**
+ * For loading .gltf and .glb 3d objects.
+ * @param {String} path 
+ */
 function loadGLTF( path ) {
     return new Promise(function(resolve){
         const gltfLoader = new GLTFLoader();

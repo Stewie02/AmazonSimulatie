@@ -4,7 +4,11 @@ import SpotLight from '../lights/SpotLight/SpotLight.js';
 import FlashingLight from '../lights/FlashingLight/FlashingLight.js';
 import Walkway from './Walkway.js';
 
-const buildRackpositions = (rackPositions) => {
+/**
+ * Build the red squares on the floor.
+ * @param {Array} rackPositions 
+ */
+const buildRackPositions = (rackPositions) => {
     let group = new THREE.Group();
     let length = 0, width = 0;
     
@@ -16,13 +20,14 @@ const buildRackpositions = (rackPositions) => {
             emissive: 0x0,
             specular: 0x1a1a1a,
             shininess: 100,
-            fog: false
+            fog: false //Only the truck is affected by fog.
         });
         let mesh = new THREE.Mesh(geometry, material);
         mesh.receiveShadow = true;
         mesh.position.set(pos.x, pos.y, pos.z);
         mesh.rotation.x = -90 * Math.PI / 180;
 
+        //Sets occupation of spot by rack
         mesh.userData.occupied = false;
         if (pos.rack != undefined ) {
             mesh.userData.occupied = true;
@@ -31,6 +36,7 @@ const buildRackpositions = (rackPositions) => {
         mesh.uuid = pos.uuid;
         group.add(mesh);
         
+        //Gets the max length and width of the warehouse
         parseFloat(pos.x) > length ? length = parseFloat(pos.x) : null;
         parseFloat(pos.z) > width ? width = parseFloat(pos.z) : null;
     });
@@ -38,6 +44,12 @@ const buildRackpositions = (rackPositions) => {
     return {mesh: group, length: length, width: width}
 }
 
+/**
+ * Builds amount of lights based on the surface area it needs to light.
+ * @param {Float} length 
+ * @param {Float} width 
+ * @param {Float} wallHeight 
+ */
 const buildSpotLights = (length, width, wallHeight) => {
     let group = new THREE.Group();
     const margin = 1
@@ -62,6 +74,13 @@ const buildSpotLights = (length, width, wallHeight) => {
     return group;
 }
 
+/**
+ * Builds a inside-out box.
+ * @param {Float} length 
+ * @param {Float} wallHeight 
+ * @param {Float} width 
+ * @param {Float} margin 
+ */
 const buildWalls = (length, wallHeight, width, margin) => {
     const wallLength = length + margin;
     const wallWidth = width + margin;
@@ -73,7 +92,7 @@ const buildWalls = (length, wallHeight, width, margin) => {
         shininess: 10,
         side: THREE.BackSide,
         map: new THREE.TextureLoader().load("textures/concrete-map.jpg"),
-        fog: false
+        fog: false //Only the truck is affected by fog.
     });
     let wallsMesh = new THREE.Mesh(wallsGeometry, wallsMaterial);
 
@@ -86,35 +105,47 @@ const buildWalls = (length, wallHeight, width, margin) => {
     return wallsMesh;
 }
 
-const buildDoor = (doorWidth, doorheight, margin) => {
-    const geometry = new THREE.PlaneGeometry(doorWidth, doorheight, 32);
+/**
+ * Builds a warehouse door.
+ * @param {Float} doorWidth 
+ * @param {Float} doorHeight
+ * @param {Float} margin 
+ */
+const buildDoor = (doorWidth, doorHeight, margin) => {
+    const geometry = new THREE.PlaneGeometry(doorWidth, doorHeight, 32);
     const material = new THREE.MeshStandardMaterial({
         color: 0x999999,
         side: THREE.FrontSide,
         emissive: 0x0,
         map: new THREE.TextureLoader().load("textures/door.jpg"),
-        fog: false
+        fog: false //Only the truck is affected by fog.
     });
     let mesh = new THREE.Mesh(geometry, material);
-    mesh.position.set( ( doorWidth / 2 ) -0.5, doorheight / 2, -(margin / 2) + 0.01);
+    mesh.position.set( ( doorWidth / 2 ) -0.5, doorHeight / 2, -(margin / 2) + 0.01);
     return mesh;
 }
 
+/**
+ * Builds a button.
+ * @param {Float} margin 
+ */
 const buildDoorButton = (margin) => {
     let group = new THREE.Group();
 
+    //Case
     const boxWidth = .15;
     const boxGeometry = new THREE.BoxGeometry(.3, .5, boxWidth);
     const boxMaterial = new THREE.MeshStandardMaterial({
         color: 0x999999,
         side: THREE.FrontSide,
-        fog: false
+        fog: false //Only the truck is affected by fog.
     });
     let box = new THREE.Mesh(boxGeometry, boxMaterial);
     box.castShadow = true;
     box.receiveShadow = true;
     group.add(box);
 
+    //Button
     const radius =  .1;
     const length = .08;
     const radialSegments = 16;  
@@ -122,7 +153,7 @@ const buildDoorButton = (margin) => {
     const buttonMaterial = new THREE.MeshStandardMaterial({
         color: 0xff0000,
         side: THREE.FrontSide,
-        fog: false
+        fog: false //Only the truck is affected by fog.
     });
     let button = new THREE.Mesh(buttonGeometry, buttonMaterial);
     button.position.set(0, 0, (length / 2) + (boxWidth /2));
@@ -136,29 +167,36 @@ const buildDoorButton = (margin) => {
 }
 
 export default class WareHouse extends Object{
+    /**
+     * Builds whole the warehouse. These are all the 3d objects that will not move during the simulation.
+     * @param {Array} rackPositions 
+     */
     constructor(rackPositions) {
         let group = new THREE.Group();
         const wallHeight = 10;
         const margin = 5;
 
-        const rackSpots = buildRackpositions( rackPositions );
+        const rackSpots = buildRackPositions( rackPositions ); //The red squares
         group.add(rackSpots.mesh);
+
+        //Gets the length and width based on the rack positions
         const length = rackSpots.length;
         const width = rackSpots.width;
         
-        group.add( buildSpotLights(length, width, wallHeight) );
-        group.add( buildWalls(length, wallHeight, width, margin) );
-        group.add( buildDoor(5, 4.5, margin));
+        group.add( buildSpotLights(length, width, wallHeight) ); //Adds the lights
+        group.add( buildWalls(length, wallHeight, width, margin) ); //Adds the walls
+        group.add( buildDoor(5, 4.5, margin)); //Adds the door
         const flashingLight = new FlashingLight(4.4, 5, -(margin / 2));
-        group.add( flashingLight.mesh );
-        group.add( buildDoorButton(margin) );
+        group.add( flashingLight.mesh ); //Adds the flashing light
+        group.add( buildDoorButton(margin) ); //Adds door button
         let walkway = new Walkway(length, width, margin);
-        group.add( walkway.getMesh() );
+        group.add( walkway.getMesh() ); //Adds walkway
 
         group.name = "warehouse";
         group.uuid = "warehouse";
         super(group);
 
+        //Sets some variables to use in main.js
         this.rackSpots = rackSpots;
         this.width = width;
         this.length = length;

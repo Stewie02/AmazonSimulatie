@@ -1,5 +1,9 @@
 import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r119/build/three.module.js';
 
+/**
+ * Builds orange flashing light fixture.
+ * @param {Float} radius 
+ */
 const buildFixture = (radius) => {
     const length = radius * 2;
     const radialSegments = 16;  
@@ -8,7 +12,7 @@ const buildFixture = (radius) => {
         color: 0xfc9803,
         side: THREE.FrontSide,
         shininess: 100,
-        fog: false
+        fog: false //Only the truck is affected by fog.
     });
     let mesh = new THREE.Mesh(geometry, material);
     mesh.rotation.x = -90 * Math.PI / 180;
@@ -16,6 +20,12 @@ const buildFixture = (radius) => {
 }
 
 export default class FlashingLight {
+    /**
+     * Builds the flashing light group.
+     * @param {Float} x 
+     * @param {Float} y 
+     * @param {Float} z 
+     */
     constructor(x, y, z) {
         let lightGroup = new THREE.Group();
 
@@ -36,6 +46,7 @@ export default class FlashingLight {
         spotLight.shadow.camera.far = 500;
         spotLight.shadow.focus = 1;
     
+        //Object to aim the light and make the animation possible
         let targetObject = new THREE.Object3D();
         targetObject.name = "flashingLightPointerObject";
         lightGroup.add( targetObject );
