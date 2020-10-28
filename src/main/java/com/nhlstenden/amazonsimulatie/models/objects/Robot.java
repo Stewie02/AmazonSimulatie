@@ -101,6 +101,7 @@ public class Robot extends MovableObject implements CanHoldRacks {
             latestNodePosition = goToPositionTask.removeNextPosition();
             if (goToPositionTask.isFinished()) assignment.removeTask();
         }
+        // TODO: PROXY
         return new PositionChange(this);
     }
 

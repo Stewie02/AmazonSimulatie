@@ -29,7 +29,6 @@ public class PickUpRackChange implements WarehouseChange {
      */
     @Override
     public String getParametersString() {
-
         StringBuilder string = new StringBuilder("{");
         string.append(createKeyValueJSON("robot", robot.getUUID())).append(",");
         string.append(createKeyValueJSON("rack", rack.getUUID()));

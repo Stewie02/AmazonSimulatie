@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.nhlstenden.amazonsimulatie.models.WarehouseManager;
-import com.nhlstenden.amazonsimulatie.views.View;
+import com.nhlstenden.amazonsimulatie.views.DefaultWebSocketView;
 
 /*
  * Dit is de abstracte controller class. Deze class is abstract omdat het een soort
@@ -17,14 +17,15 @@ import com.nhlstenden.amazonsimulatie.views.View;
  * methode, kun je later zelf nog invullen door verder te bouwen op deze class.
  */
 public abstract class Controller implements Runnable, PropertyChangeListener {
-    private final List<View> views;
+
+    private final List<DefaultWebSocketView> views;
     protected WarehouseManager warehouseManager;
 
     public Controller(WarehouseManager model) {
-        this(model, new ArrayList<View>());
+        this(model, new ArrayList<>());
     }
 
-    public Controller(WarehouseManager model, List<View> views) {
+    public Controller(WarehouseManager model, List<DefaultWebSocketView> views) {
         this.warehouseManager = model;
         this.warehouseManager.addObserver(this); //Automatisch wordt deze controller toegevoegd aan het model om updates te ontvangen.
         this.views = new ArrayList<>(views);
@@ -36,7 +37,7 @@ public abstract class Controller implements Runnable, PropertyChangeListener {
      * After this we'll add the view to the views to send the new data
      * @param view
      */
-    public void addView(View view) {
+    public void addView(DefaultWebSocketView view) {
         this.onViewAdded(view);
         this.views.add(view);
     }
@@ -45,17 +46,17 @@ public abstract class Controller implements Runnable, PropertyChangeListener {
      * Deze methode kan later geïmplementeerd worden om aan te geven wat er moet
      * gebeuren met een view die nieuw toegevoegd wordt aan de controller.
      */
-    protected abstract void onViewAdded(View view);
+    protected abstract void onViewAdded(DefaultWebSocketView view);
 
     /**
      * Returns the views list. Be advised that this is the internal list, for use by the controller only.
      * @return The internal list of views.
      */
-    protected List<View> getViews() {
+    protected List<DefaultWebSocketView> getViews() {
         return this.views;
     }
 
-    protected void removeView(View view) {
+    protected void removeView(DefaultWebSocketView view) {
         this.views.remove(view);
     }
 

@@ -1,14 +1,13 @@
 package com.nhlstenden.amazonsimulatie.controllers;
 
 import java.beans.PropertyChangeEvent;
-import java.util.List;
 
 import com.nhlstenden.amazonsimulatie.base.Command;
 import com.nhlstenden.amazonsimulatie.models.WarehouseManager;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
-import com.nhlstenden.amazonsimulatie.models.warehousechanges.WarehouseChange;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
-import com.nhlstenden.amazonsimulatie.views.View;
+import com.nhlstenden.amazonsimulatie.models.warehousechanges.WarehouseChange;
+import com.nhlstenden.amazonsimulatie.views.DefaultWebSocketView;
 
 /*
  * Dit is de controller class die de simulatie beheerd. Deze class erft van
@@ -32,7 +31,7 @@ public class SimulationController extends Controller {
     @Override
     public void run() {
         while (true) {
-            sendWorldChange(this.getWorld().newUpdate());
+            this.getWorld().update();
 
             try {
                 Thread.sleep(50);
@@ -43,7 +42,7 @@ public class SimulationController extends Controller {
     }
 
     @Override
-    protected void onViewAdded(final View view) {
+    protected void onViewAdded(final DefaultWebSocketView view) {
         final Controller t = this;
 
         /*
@@ -73,8 +72,8 @@ public class SimulationController extends Controller {
          * keer alle objecten krijgt toegestuurd, ook als deze objecten niet updaten. Zo voorkom je
          * dat de view alleen objecten ziet die worden geupdate (bijvoorbeeld bewegen).
          */
-        for (Object3D object : this.getWorld().getWorldObjectsAsList()) {
-            view.update("build", object);
+        for (Object3D object : this.getWorld().getAllMovableObjects()) {
+            view.build(object);
         }
     }
 
@@ -86,20 +85,10 @@ public class SimulationController extends Controller {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         for(int i = 0; i < this.getViews().size(); i++) {
-            View currentView = this.getViews().get(i);
+            DefaultWebSocketView currentView = this.getViews().get(i);
 
             if(currentView != null) {
-                currentView.update(evt.getPropertyName(), (Object3D)evt.getNewValue());
-            }
-        }
-    }
-
-    private void sendWorldChange(List<WarehouseChange> warehouseChanges) {
-        for(int i = 0; i < this.getViews().size(); i++) {
-            View currentView = this.getViews().get(i);
-
-            for (WarehouseChange warehouseChange : warehouseChanges) {
-                currentView.sendWorldChange(warehouseChange);
+                currentView.sendWorldChange((WarehouseChange) evt.getNewValue());
             }
         }
     }

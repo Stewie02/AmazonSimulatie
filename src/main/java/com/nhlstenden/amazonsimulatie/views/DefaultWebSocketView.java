@@ -22,7 +22,7 @@ import org.springframework.web.socket.WebSocketSession;
  * serversystemen. In deze class wordt de WebSocketSession van de client opgeslagen,
  * waarmee de view class kan communiceren met de browser.
  */
-public class DefaultWebSocketView implements View {
+public class DefaultWebSocketView {
     private WebSocketSession session;
     private Command onClose;
 
@@ -36,10 +36,9 @@ public class DefaultWebSocketView implements View {
      * JSON pakketje maakt van de informatie die verstuurd moet worden. Deze JSON
      * wordt naar de browser verstuurd, welke de informatie weer afhandeld.
      */
-    @Override
-    public void update(String event, Object3D data) {
+    public void build(Object3D data) {
         sendMessage("{"
-                + surroundString("command") + ": " + surroundString(event) + ","
+                + surroundString("command") + ": " + surroundString("build") + ","
                 + surroundString("parameters") + ": " + jsonifyObject3D(data)
                 + "}");
     }
@@ -69,7 +68,6 @@ public class DefaultWebSocketView implements View {
         sendMessage(stringBuilder.toString());
     }
 
-    @Override
     public void sendWorldChange(WarehouseChange warehouseChange) {
 
         if (warehouseChange instanceof PickUpRackChange) System.out.println("Picking up");
@@ -82,7 +80,6 @@ public class DefaultWebSocketView implements View {
         );
     }
 
-    @Override
     public void sendNode(String event, Node node)
     {
         sendMessage("{"
@@ -95,7 +92,6 @@ public class DefaultWebSocketView implements View {
                 + "}");
     }
 
-    @Override
     public void onViewClose(Command command) {
         onClose = command;
     }

@@ -4,7 +4,6 @@ import com.nhlstenden.amazonsimulatie.models.Constants;
 import com.nhlstenden.amazonsimulatie.models.objects.Rack;
 import com.nhlstenden.amazonsimulatie.models.objects.RackPosition;
 import com.nhlstenden.amazonsimulatie.models.objects.Robot;
-import com.nhlstenden.amazonsimulatie.models.pathfinding.Dijkstra;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 
 import java.util.List;
