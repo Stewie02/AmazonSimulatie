@@ -4,9 +4,9 @@ import java.beans.PropertyChangeEvent;
 import java.util.List;
 
 import com.nhlstenden.amazonsimulatie.base.Command;
-import com.nhlstenden.amazonsimulatie.models.World;
+import com.nhlstenden.amazonsimulatie.models.WarehouseManager;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
-import com.nhlstenden.amazonsimulatie.models.worldchanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.warehousechanges.WarehouseChange;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 import com.nhlstenden.amazonsimulatie.views.View;
 
@@ -17,8 +17,8 @@ import com.nhlstenden.amazonsimulatie.views.View;
  */
 public class SimulationController extends Controller {
 
-    public SimulationController(World world) {
-        super(world); //Met dit onderdeel roep je de constructor aan van de superclass (Controller)
+    public SimulationController(WarehouseManager warehouseManager) {
+        super(warehouseManager); //Met dit onderdeel roep je de constructor aan van de superclass (Controller)
     }
 
     /*
@@ -63,7 +63,7 @@ public class SimulationController extends Controller {
 
         view.sendRackPositions(this.getWorld().getRackPositions());
 
-        for (Node node : this.world.getNodes())
+        for (Node node : this.warehouseManager.getNodes())
         {
             view.sendNode("node", node);
         }
@@ -94,12 +94,12 @@ public class SimulationController extends Controller {
         }
     }
 
-    private void sendWorldChange(List<WorldChange> worldChanges) {
+    private void sendWorldChange(List<WarehouseChange> warehouseChanges) {
         for(int i = 0; i < this.getViews().size(); i++) {
             View currentView = this.getViews().get(i);
 
-            for (WorldChange worldChange : worldChanges) {
-                currentView.sendWorldChange(worldChange);
+            for (WarehouseChange warehouseChange : warehouseChanges) {
+                currentView.sendWorldChange(warehouseChange);
             }
         }
     }

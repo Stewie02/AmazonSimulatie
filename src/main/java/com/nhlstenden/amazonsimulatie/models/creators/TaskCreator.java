@@ -39,7 +39,7 @@ public class TaskCreator {
         assignment.addTask(new GoToPosition(pickUpPosition.getAdjacentNode()));
         assignment.addTask(new PickUpRack(rackToPickUp));
         assignment.addTask(new GoToPosition(truck.getDropOffNode()));
-        assignment.addTask(new DropOffRack(rackToPickUp, truck));
+        assignment.addTask(new DropOffRack(truck));
         return assignment;
     }
 
@@ -67,7 +67,7 @@ public class TaskCreator {
         assignment.addTask(new GoToPosition(truck.getDropOffNode()));
         assignment.addTask(new PickUpRack(newRack));
         assignment.addTask(new GoToPosition(dropOffPosition.getAdjacentNode()));
-        assignment.addTask(new DropOffRack(newRack, dropOffPosition));
+        assignment.addTask(new DropOffRack(dropOffPosition));
 
         return assignment;
     }

@@ -2,7 +2,7 @@ package com.nhlstenden.amazonsimulatie.views;
 
 import com.nhlstenden.amazonsimulatie.base.Command;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
-import com.nhlstenden.amazonsimulatie.models.worldchanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.warehousechanges.WarehouseChange;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 import com.nhlstenden.amazonsimulatie.models.objects.RackPosition;
 
@@ -20,5 +20,5 @@ public interface View {
 
     void sendRackPositions(List<RackPosition> rackPositions);
 
-    void sendWorldChange(WorldChange worldChanges);
+    void sendWorldChange(WarehouseChange warehouseChanges);
 }

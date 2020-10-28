@@ -1,7 +1,7 @@
 package com.nhlstenden.amazonsimulatie.models.objects;
 
 import com.nhlstenden.amazonsimulatie.models.position.Position;
-import com.nhlstenden.amazonsimulatie.models.worldchanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.warehousechanges.WarehouseChange;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Updatable;
 
@@ -14,13 +14,13 @@ import java.util.UUID;
 public abstract class MovableObject extends HasPosition implements Updatable, Object3D {
 
     private double rotationX, rotationY, rotationZ;
-    private UUID uuid;
+    private final UUID uuid;
 
     /**
      * This constructor creates a Position object and an UUID
      * @param x The x location of the object
      * @param y The y location of the movable object
-     * @param z
+     * @param z The z location of the movable object
      */
     public MovableObject(double x, double y, double z) {
         super(x, y, z);
@@ -48,7 +48,7 @@ public abstract class MovableObject extends HasPosition implements Updatable, Ob
      * In this function happens all the movement of the robot per frame
      * @return The change of the World after the function call
      */
-    public abstract WorldChange update();
+    public abstract WarehouseChange update();
 
     /**
      * This function return the rotation around the X-axis

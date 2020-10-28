@@ -1,6 +1,6 @@
 package com.nhlstenden.amazonsimulatie.models;
 
-import com.nhlstenden.amazonsimulatie.models.worldchanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.warehousechanges.WarehouseChange;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
 import com.nhlstenden.amazonsimulatie.models.objects.RackPosition;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
@@ -16,7 +16,7 @@ import java.util.List;
  * de logica die van toepassing is op het domein dat de applicatie modelleerd, staat
  * in het model. Dit betekent dus de logica die het magazijn simuleert.
  */
-public class World {
+public class WarehouseManager {
     /*
      * De wereld bestaat uit objecten, vandaar de naam worldObjects. Dit is een lijst
      * van alle objecten in de 3D wereld. Deze objecten zijn in deze voorbeeldcode alleen
@@ -36,7 +36,7 @@ public class World {
      * De wereld maakt een lege lijst voor worldObjects aan. Daarin wordt nu één robot gestopt.
      * Deze methode moet uitgebreid worden zodat alle objecten van de 3D wereld hier worden gemaakt.
      */
-    public World() {
+    public WarehouseManager() {
         this.worldObjects = new ArrayList<>();
         this.movableObjectsManager = new MovableObjectsManager();
     }
@@ -65,7 +65,7 @@ public class World {
 //        }
     }
 
-    public List<WorldChange> newUpdate() {
+    public List<WarehouseChange> newUpdate() {
         return this.movableObjectsManager.update();
     }
 

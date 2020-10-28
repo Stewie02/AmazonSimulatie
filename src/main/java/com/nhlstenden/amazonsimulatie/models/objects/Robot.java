@@ -1,21 +1,20 @@
 package com.nhlstenden.amazonsimulatie.models.objects;
 
 import com.nhlstenden.amazonsimulatie.models.position.Position;
-import com.nhlstenden.amazonsimulatie.models.position.RealPosition;
-import com.nhlstenden.amazonsimulatie.models.worldchanges.DropOffRackChange;
-import com.nhlstenden.amazonsimulatie.models.worldchanges.PickUpRackChange;
-import com.nhlstenden.amazonsimulatie.models.worldchanges.PositionChange;
-import com.nhlstenden.amazonsimulatie.models.worldchanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.warehousechanges.DropOffRackChange;
+import com.nhlstenden.amazonsimulatie.models.warehousechanges.PickUpRackChange;
+import com.nhlstenden.amazonsimulatie.models.warehousechanges.PositionChange;
+import com.nhlstenden.amazonsimulatie.models.warehousechanges.WarehouseChange;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.CanHoldRacks;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 import com.nhlstenden.amazonsimulatie.models.tasks.*;
 
 import java.util.*;
 
-/*
- * Deze class stelt een robot voor. Hij impelementeerd de class Object3D, omdat het ook een
- * 3D object is. Ook implementeerd deze class de interface Updatable. Dit is omdat
- * een robot geupdate kan worden binnen de 3D wereld om zich zo voort te bewegen.
+/**
+ * This is the Robot class. A robot drives around in the warehouse and moves Racks
+ * The Robot class extends from MovableObject because it moves through the warehouse
+ * Also it implements CanHoldRacks because it can moves the Racks
  */
 public class Robot extends MovableObject implements CanHoldRacks {
     private Rack pickedUpRack = null;
@@ -24,93 +23,110 @@ public class Robot extends MovableObject implements CanHoldRacks {
     private Position latestNodePosition;
     private Assignment lastAssignment = null;
 
+    /**
+     * This constructor needs a beginNode the know what the starting position of the robot is
+     * Also the latestNodePosition will be equal to the Position of the given Node
+     * @param beginNode The starting Node of the Robot
+     */
     public Robot(Node beginNode)
     {
         super(beginNode.getPosition());
         latestNodePosition = beginNode.getPosition();
     }
 
-    public Robot(double x, double y, double z, Rack pickedUpRack) {
-        super(x, y, z);
-        this.pickedUpRack = pickedUpRack;
-    }
-
-    /*
-     * Deze update methode wordt door de World aangeroepen wanneer de
-     * World zelf geupdate wordt. Dit betekent dat elk object, ook deze
-     * robot, in de 3D wereld steeds een beetje tijd krijgt om een update
-     * uit te voeren. In de updatemethode hieronder schrijf je dus de code
-     * die de robot steeds uitvoert (bijvoorbeeld positieveranderingen). Wanneer
-     * de methode true teruggeeft (zoals in het voorbeeld), betekent dit dat
-     * er inderdaad iets veranderd is en dat deze nieuwe informatie naar de views
-     * moet worden gestuurd. Wordt false teruggegeven, dan betekent dit dat er niks
-     * is veranderd, en de informatie hoeft dus niet naar de views te worden gestuurd.
-     * (Omdat de informatie niet veranderd is, is deze dus ook nog steeds hetzelfde als
-     * in de view)
+    /**
+     * This function takes the first assignment of the Robot and completes a Task from it
+     * @return a WarehouseChange if something changed in the World, else null
      */
-    public WorldChange update()
+    public WarehouseChange update()
     {
-        WorldChange worldChange = null;
+        WarehouseChange warehouseChange = null;
         if (!assignments.isEmpty()) {
-            Queue<Task> tasks = assignments.peek().getTasks();
-            if (tasks.peek() instanceof DropOffRack) {
-                worldChange = dropOffRack((DropOffRack) tasks.peek());
+            Assignment nextAssignment = assignments.peek();
+            if (nextAssignment.getTask() instanceof DropOffRack) {
+                warehouseChange = dropOffRack((DropOffRack) nextAssignment.getTask());
             }
-            if (tasks.peek() instanceof PickUpRack) {
-                worldChange = pickUpRack((PickUpRack) tasks.peek());
+            if (nextAssignment.getTask() instanceof PickUpRack) {
+                warehouseChange = pickUpRack((PickUpRack) nextAssignment.getTask());
             }
-            if (tasks.peek() instanceof GoToPosition) {
-                worldChange = goToPosition((GoToPosition) tasks.peek(), tasks);
+            if (nextAssignment.getTask() instanceof GoToPosition) {
+                warehouseChange = goToPosition((GoToPosition) nextAssignment.getTask(), nextAssignment);
             }
-            if (worldChange instanceof DropOffRackChange || worldChange instanceof PickUpRackChange)
-                tasks.poll();
-            if (tasks.isEmpty()) lastAssignment = assignments.poll();
+            if (warehouseChange instanceof DropOffRackChange || warehouseChange instanceof PickUpRackChange)
+                nextAssignment.removeTask();
+            if (nextAssignment.isFinished()) lastAssignment = assignments.poll();
         }
-        return worldChange;
+        return warehouseChange;
     }
 
+    /**
+     * Adds an assignment to the Robot
+     * @param assignment Assignment to add
+     */
     public void addAssignment(Assignment assignment) {
         this.assignments.add(assignment);
     }
 
-    private WorldChange goToPosition(GoToPosition goToPositionTask, Queue<Task> tasks) {
+    /**
+     * Takes the last Position of the goToPositionTask and drives towards it.
+     * When it reaches the Position it removes it from the task
+     * @param goToPositionTask The Task which has to be completed
+     * @param assignment The assignment that being executed
+     * @return A WarehouseChange if something is changed
+     */
+    private WarehouseChange goToPosition(GoToPosition goToPositionTask, Assignment assignment) {
 
-        // Speed of robot is 0.2
+        /* If the getNextPosition == null the Position is already reached
+        So we'll remove the task and return null */
         if (goToPositionTask.getNextPosition() == null) {
-            tasks.poll();
+            assignment.removeTask();
             return null;
         }
 
-        // Here happens the movement of the robot
         Position goToPosition = goToPositionTask.getNextPosition();
 
+        // Calculate how much the robot has to move on every axis
         double differenceX = goToPosition.getX() - position.getX();
         double differenceY = goToPosition.getY() - position.getY();
         double differenceZ = goToPosition.getZ() - position.getZ();
 
+        // Change the Position
         position.x += positionDifference(differenceX);
         position.y += positionDifference(differenceY);
         position.z += positionDifference(differenceZ);
 
+        // If the goToPosition is reached the latestNodePosition will be updated
+        // If the whole Task is completed we'll remove it from the tasks Queue
         if (goToPosition.getX() == position.getX() && goToPosition.getY() == position.getY() && goToPosition.getZ() == position.getZ()) {
             latestNodePosition = goToPositionTask.removeNextPosition();
-            if (goToPositionTask.isFinished()) tasks.poll();
+            if (goToPositionTask.isFinished()) assignment.removeTask();
         }
         return new PositionChange(this);
     }
 
-    private double positionDifference(double dif)
+    /**
+     * This function will calculate how much the Robot has to move.
+     * This will be calculated with the difference between the Position given in the parameters.
+     * @param difference Difference between the two Positions
+     * @return The amount the Robot has to move
+     */
+    private double positionDifference(double difference)
     {
-        if (dif > 0)
-            if (dif > 0.2) return 0.2;
-            else return dif;
-        if (dif < 0)
-            if (dif < 0.2) return -0.2;
-            else return dif;
+        if (difference > 0)
+            return Math.min(difference, 0.2);
+        if (difference < 0)
+            if (difference < 0.2) return -0.2;
+            else return difference;
         return 0;
     }
 
-    private WorldChange pickUpRack(PickUpRack pickOffRackTask)
+    /**
+     * This function will pick up a Rack and change the values of the Rack and Robot
+     * After this it returns a WarehouseChange
+     * @param pickOffRackTask The PickUpRack Task which has to be performed
+     * @return A WarehouseChange filled with the data of what happened
+     */
+    private WarehouseChange pickUpRack(PickUpRack pickOffRackTask)
     {
         Rack rack = pickOffRackTask.getRackToPickUp();
         setRack(rack);
@@ -122,9 +138,15 @@ public class Robot extends MovableObject implements CanHoldRacks {
         return new PickUpRackChange(this, rack);
     }
 
-    private WorldChange dropOffRack(DropOffRack dropOffRackTask)
+    /**
+     * This function will drop off a Rack and change the values of the Rack, Robot and Position where it will be dropped
+     * After this it returns a WarehouseChange
+     * @param dropOffRackTask The DropOffRack Task which has to be performed
+     * @return The WarehouseChange with the data of the Task
+     */
+    private WarehouseChange dropOffRack(DropOffRack dropOffRackTask)
     {
-        System.out.println(this.pickedUpRack);
+        // TODO: CHECK THE NULL POINTER EXCEPTION
         Rack r = this.pickedUpRack;
         setRack(null);
         dropOffRackTask.getDropOffPosition().setRack(r);
@@ -134,34 +156,51 @@ public class Robot extends MovableObject implements CanHoldRacks {
         return new DropOffRackChange(this, dropOffRackTask.getDropOffPosition(), r);
     }
 
+    /**
+     * Returns boolean which indicates if the Robot has finished all the Assignments
+     * @return boolean which is true if all Assignments are finished
+     */
     public boolean finishedAllAssignments() {
         return assignments.isEmpty();
     }
 
+    /**
+     * Returns the node which the Robot visited the last
+     * @return The last visited Node
+     */
     public Position getLatestNodePosition() {
         return latestNodePosition;
     }
 
+    /**
+     * return The last finished Assignment
+     */
     public Assignment getLastAssignment() {
         return lastAssignment;
     }
 
+    /**
+     * Sets the picked up Rack of the Robot
+     * @param rack Rack that is picked up
+     */
     public void setRack(Rack rack) {
         this.pickedUpRack = rack;
     }
 
+    /**\
+     * Returns the Rack that the Robot is carrying right now
+     * @return The Rack that the Robot carries
+     */
     public Rack getRack() {
         return this.pickedUpRack;
     }
 
+    /**
+     * Returns the type of the Robot, this can be used by the client to know what object it has to spawn
+     * @return The type of the Robot
+     */
     @Override
     public String getType() {
-        /*
-         * Dit onderdeel wordt gebruikt om het type van dit object als stringwaarde terug
-         * te kunnen geven. Het moet een stringwaarde zijn omdat deze informatie nodig
-         * is op de client, en die verstuurd moet kunnen worden naar de browser. In de
-         * javascript code wordt dit dan weer verder afgehandeld.
-         */
         return Robot.class.getSimpleName().toLowerCase();
     }
 }

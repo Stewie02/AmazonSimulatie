@@ -7,8 +7,8 @@ import com.nhlstenden.amazonsimulatie.base.Command;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
 
 import com.nhlstenden.amazonsimulatie.models.objects.Robot;
-import com.nhlstenden.amazonsimulatie.models.worldchanges.PickUpRackChange;
-import com.nhlstenden.amazonsimulatie.models.worldchanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.warehousechanges.PickUpRackChange;
+import com.nhlstenden.amazonsimulatie.models.warehousechanges.WarehouseChange;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 import com.nhlstenden.amazonsimulatie.models.objects.RackPosition;
 import org.springframework.web.socket.TextMessage;
@@ -70,14 +70,14 @@ public class DefaultWebSocketView implements View {
     }
 
     @Override
-    public void sendWorldChange(WorldChange worldChange) {
+    public void sendWorldChange(WarehouseChange warehouseChange) {
 
-        if (worldChange instanceof PickUpRackChange) System.out.println("Picking up");
+        if (warehouseChange instanceof PickUpRackChange) System.out.println("Picking up");
 
         sendMessage(
                 "{"
-                        + surroundString("command") + ": " + surroundString(worldChange.getCommand()) + ","
-                        + surroundString("parameters") + ": " + worldChange.getParametersString()
+                        + surroundString("command") + ": " + surroundString(warehouseChange.getCommand()) + ","
+                        + surroundString("parameters") + ": " + warehouseChange.getParametersString()
                 + "}"
         );
     }

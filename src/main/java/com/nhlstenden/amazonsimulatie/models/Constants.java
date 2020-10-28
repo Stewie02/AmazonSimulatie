@@ -1,5 +1,8 @@
 package com.nhlstenden.amazonsimulatie.models;
 
+/**
+ * The constants class has some variables about the World and warehouse
+ */
 public class Constants
 {
     // This is the distance between the racks from leftTop to leftTop

@@ -1,8 +1,7 @@
 package com.nhlstenden.amazonsimulatie.models;
 
 import com.nhlstenden.amazonsimulatie.models.position.Position;
-import com.nhlstenden.amazonsimulatie.models.position.RealPosition;
-import com.nhlstenden.amazonsimulatie.models.worldchanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.warehousechanges.WarehouseChange;
 import com.nhlstenden.amazonsimulatie.models.creators.NodeListCreator;
 import com.nhlstenden.amazonsimulatie.models.creators.WorldObjectsCreator;
 import com.nhlstenden.amazonsimulatie.models.creators.TaskCreator;
@@ -34,7 +33,7 @@ public class MovableObjectsManager {
         robots = new Robot[Constants.AMOUNT_OF_ROBOTS];
         WorldObjectsCreator.createRobots(robots, dijkstra.getNodes());
 
-        truck = new Truck(rackPositions, dijkstra.getNodes().get(2));
+        truck = new Truck(dijkstra.getNodes().get(2));
     }
 
     public List<Object3D> getMovableObjectsAsList()
@@ -56,13 +55,13 @@ public class MovableObjectsManager {
         return rackPositionsList;
     }
 
-    public List<WorldChange> update()
+    public List<WarehouseChange> update()
     {
-        List<WorldChange> worldChanges = new ArrayList<>();
+        List<WarehouseChange> warehouseChanges = new ArrayList<>();
         for (MovableObject object : robots)
         {
-            WorldChange worldChange = object.update();
-            if (worldChange != null) worldChanges.add(worldChange);
+            WarehouseChange warehouseChange = object.update();
+            if (warehouseChange != null) warehouseChanges.add(warehouseChange);
             if (object instanceof Robot)
                 if (((Robot) object).finishedAllAssignments()) {
                     // TODO: Add tasks to the robots
@@ -82,15 +81,15 @@ public class MovableObjectsManager {
                 }
         }
 
-        WorldChange truckChange = truck.update();
-        if (truckChange != null) worldChanges.add(truckChange);
+        WarehouseChange truckChange = truck.update();
+        if (truckChange != null) warehouseChanges.add(truckChange);
 
         if (truck.timeToAddAssignments()) {
             System.out.println("Adding assignments");
             truck.addAssignments(generateNewAssignments());
         }
 
-        return worldChanges;
+        return warehouseChanges;
     }
 
     private List<Assignment> generateNewAssignments() {

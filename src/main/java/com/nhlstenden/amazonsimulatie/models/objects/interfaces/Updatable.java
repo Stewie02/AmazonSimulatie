@@ -1,14 +1,16 @@
 package com.nhlstenden.amazonsimulatie.models.objects.interfaces;
 
-import com.nhlstenden.amazonsimulatie.models.worldchanges.WorldChange;
+import com.nhlstenden.amazonsimulatie.models.warehousechanges.WarehouseChange;
 
 /*
- * Deze interface beschrijft wat een onderdeel van het model moet kunnen om deze
- * te kunnen updaten. In de lijst met objecten in de wereld (zie class World) zitten
- * objecten die geupdate kunnen worden. Er wordt gecontroleerd of een object deze
- * interface implementeerd. Als dat zo is, wordt het object geupdate wanneer de
- * wereld update.
+ * An updatable object in the warehouse is an object that can change it's own state
  */
 public interface Updatable {
-    WorldChange update();
+
+    /**
+     * When this function is called the Object does something were it state changes
+     * It returns an WorldChange, this one will be send to the Controller which then sends it back to clients
+     * @return An WorldChange
+     */
+    WarehouseChange update();
 }

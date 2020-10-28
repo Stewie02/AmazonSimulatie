@@ -1,21 +1,57 @@
 package com.nhlstenden.amazonsimulatie.models.objects.interfaces;
 
-/*
- * Deze interface beschrijft wat een 3D model is. Het is een interface omdat alleen de
- * methoden worden gegeven die een object moet implementeren om een 3D model te kunnen zijn.
- * Merk op dat hier alleen getters in staan, en geen setters. Dit heeft te maken met de
- * uitvoering van het proxy pattern, en het feit dat in deze software eigenlijk bijna geen
- * setters nodig zijn.
+/**
+ * An Object3D is an object in the World which has 3 dimensions.
+ * This interface contains all the methods which a Object3D should implement
+ * These methods are mostly used in the DefaultWebSocketView
  */
 public interface Object3D {
-    public abstract String getUUID();
-    public abstract String getType();
 
-    public abstract double getX();
-    public abstract double getY();
-    public abstract double getZ();
-    
-    public abstract double getRotationX();
-    public abstract double getRotationY();
-    public abstract double getRotationZ();
+    /**
+     * Returns the UUID of the object
+     * @return The UUID
+     */
+    String getUUID();
+
+    /**
+     * Returns the type of the object
+     * @return The type
+     */
+    String getType();
+
+    /**
+     * Returns the X-coordinate of the object
+     * @return The X-coordinate
+     */
+    double getX();
+
+    /**
+     * Returns the Y-coordinate of the object
+     * @return The Y-coordinate
+     */
+    double getY();
+
+    /**
+     * Returns the Z-coordinate of the object
+     * @return The Z-coordinate
+     */
+    double getZ();
+
+    /**
+     * Returns the rotation around the X-axis of the object
+     * @return The rotation around the X-axis
+     */
+    double getRotationX();
+
+    /**
+     * Returns the rotation around the X-axis of the object
+     * @return The rotation around the X-axis
+     */
+    double getRotationY();
+
+    /**
+     * Returns the rotation around the Z-axis of the object
+     * @return The rotation around the Z-axis
+     */
+    double getRotationZ();
 }

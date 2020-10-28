@@ -1,17 +1,29 @@
-package com.nhlstenden.amazonsimulatie.models.worldchanges;
+package com.nhlstenden.amazonsimulatie.models.warehousechanges;
 
 import com.nhlstenden.amazonsimulatie.models.objects.MovableObject;
 import com.nhlstenden.amazonsimulatie.models.objects.Robot;
 
-public class PositionChange implements WorldChange {
+import static com.nhlstenden.amazonsimulatie.helpers.JSONHelper.surroundString;
+
+/**
+ * The PositionChange class contains all the information the client needs about an object that changed it's Position
+ */
+public class PositionChange implements WarehouseChange {
     
     private final MovableObject movedObject;
-    private final String command = "update";
 
+    /**
+     * Takes in the object that is moved
+     * @param movedObject Object that moved
+     */
     public PositionChange(MovableObject movedObject) {
         this.movedObject = movedObject;
     }
-    
+
+    /**
+     * Returns the JSON object which is sent to the client
+     * @return String in JSON format
+     */
     @Override
     public String getParametersString() {
         String str =  "{"
@@ -32,15 +44,11 @@ public class PositionChange implements WorldChange {
         return str;
     }
 
+    /**
+     * Returns the command for the client
+     * @return The command
+     */
     public String getCommand() {
-        return this.command;
-    }
-
-    private String createKeyValueJSON(String key, String value) {
-        return surroundString(key) + ": " + surroundString(value);
-    }
-
-    private String surroundString(String s) {
-        return "\"" + s + "\"";
+        return "update";
     }
 }
