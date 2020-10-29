@@ -5,7 +5,7 @@ import java.io.IOException;
 import com.nhlstenden.amazonsimulatie.controllers.Controller;
 import com.nhlstenden.amazonsimulatie.controllers.SimulationController;
 import com.nhlstenden.amazonsimulatie.models.WarehouseManager;
-import com.nhlstenden.amazonsimulatie.views.DefaultWebSocketView;
+import com.nhlstenden.amazonsimulatie.views.SimulationView;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -95,7 +95,7 @@ public class App extends SpringBootServletInitializer implements WebSocketConfig
          */
         @Override
         public void afterConnectionEstablished(WebSocketSession session) {
-            controller.addView(new DefaultWebSocketView(session));
+            controller.addView(new SimulationView(session));
         }
 
         /*

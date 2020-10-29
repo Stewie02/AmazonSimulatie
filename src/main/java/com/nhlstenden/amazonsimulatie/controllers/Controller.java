@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.nhlstenden.amazonsimulatie.models.WarehouseManager;
-import com.nhlstenden.amazonsimulatie.views.DefaultWebSocketView;
+import com.nhlstenden.amazonsimulatie.views.SimulationView;
 
 /*
  * Dit is de abstracte controller class. Deze class is abstract omdat het een soort
@@ -18,14 +18,14 @@ import com.nhlstenden.amazonsimulatie.views.DefaultWebSocketView;
  */
 public abstract class Controller implements Runnable, PropertyChangeListener {
 
-    private final List<DefaultWebSocketView> views;
+    private final List<SimulationView> views;
     protected WarehouseManager warehouseManager;
 
     public Controller(WarehouseManager model) {
         this(model, new ArrayList<>());
     }
 
-    public Controller(WarehouseManager model, List<DefaultWebSocketView> views) {
+    public Controller(WarehouseManager model, List<SimulationView> views) {
         this.warehouseManager = model;
         this.warehouseManager.addObserver(this); //Automatisch wordt deze controller toegevoegd aan het model om updates te ontvangen.
         this.views = new ArrayList<>(views);
@@ -37,7 +37,7 @@ public abstract class Controller implements Runnable, PropertyChangeListener {
      * After this we'll add the view to the views to send the new data
      * @param view
      */
-    public void addView(DefaultWebSocketView view) {
+    public void addView(SimulationView view) {
         this.onViewAdded(view);
         this.views.add(view);
     }
@@ -46,17 +46,17 @@ public abstract class Controller implements Runnable, PropertyChangeListener {
      * Deze methode kan later geïmplementeerd worden om aan te geven wat er moet
      * gebeuren met een view die nieuw toegevoegd wordt aan de controller.
      */
-    protected abstract void onViewAdded(DefaultWebSocketView view);
+    protected abstract void onViewAdded(SimulationView view);
 
     /**
      * Returns the views list. Be advised that this is the internal list, for use by the controller only.
      * @return The internal list of views.
      */
-    protected List<DefaultWebSocketView> getViews() {
+    protected List<SimulationView> getViews() {
         return this.views;
     }
 
-    protected void removeView(DefaultWebSocketView view) {
+    protected void removeView(SimulationView view) {
         this.views.remove(view);
     }
 

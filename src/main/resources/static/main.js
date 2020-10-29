@@ -15,6 +15,20 @@ const meshLoader = new PreMeshLoader()
 window.onload = function () {
     world = new World();
 
+    commandHandler({
+        command: 'build',
+        parameters: {
+            uuid: 'man',
+            type: 'manager',
+            x: 50,
+            y: 5,
+            z: 10,
+            rotationX: 0,
+            rotationY: 270,
+            rotationZ: 0
+        }
+    });
+
     document.getElementById('darkMode').addEventListener("click", toggleDarkMode);
     document.getElementById('sound').addEventListener("click", toggleSound);
     document.getElementById('rotate').addEventListener("click", toggleRotation);

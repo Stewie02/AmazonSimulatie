@@ -7,7 +7,7 @@ import com.nhlstenden.amazonsimulatie.models.WarehouseManager;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 import com.nhlstenden.amazonsimulatie.models.warehousechanges.WarehouseChange;
-import com.nhlstenden.amazonsimulatie.views.DefaultWebSocketView;
+import com.nhlstenden.amazonsimulatie.views.SimulationView;
 
 /*
  * Dit is de controller class die de simulatie beheerd. Deze class erft van
@@ -42,7 +42,7 @@ public class SimulationController extends Controller {
     }
 
     @Override
-    protected void onViewAdded(final DefaultWebSocketView view) {
+    protected void onViewAdded(final SimulationView view) {
         final Controller t = this;
 
         /*
@@ -85,7 +85,7 @@ public class SimulationController extends Controller {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         for(int i = 0; i < this.getViews().size(); i++) {
-            DefaultWebSocketView currentView = this.getViews().get(i);
+            SimulationView currentView = this.getViews().get(i);
 
             if(currentView != null) {
                 currentView.sendWorldChange((WarehouseChange) evt.getNewValue());

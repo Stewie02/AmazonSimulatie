@@ -7,26 +7,20 @@ import com.nhlstenden.amazonsimulatie.base.Command;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
 
 import com.nhlstenden.amazonsimulatie.models.objects.Robot;
-import com.nhlstenden.amazonsimulatie.models.warehousechanges.PickUpRackChange;
 import com.nhlstenden.amazonsimulatie.models.warehousechanges.WarehouseChange;
 import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 import com.nhlstenden.amazonsimulatie.models.objects.RackPosition;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-/*
- * Deze class is de standaard websocketview. De class is een andere variant
- * van een gewone view. Een "normale" view is meestal een schermpje op de PC,
- * maar in dit geval is het wat de gebruiker ziet in de browser. Het behandelen
- * van een webpagina als view zie je vaker wanneer je te maken hebt met
- * serversystemen. In deze class wordt de WebSocketSession van de client opgeslagen,
- * waarmee de view class kan communiceren met de browser.
+/**
+ * The default
  */
-public class DefaultWebSocketView {
-    private WebSocketSession session;
+public class SimulationView {
+    private final WebSocketSession session;
     private Command onClose;
 
-    public DefaultWebSocketView(WebSocketSession session) {
+    public SimulationView(WebSocketSession session) {
         this.session = session;
     }
 
@@ -69,9 +63,6 @@ public class DefaultWebSocketView {
     }
 
     public void sendWorldChange(WarehouseChange warehouseChange) {
-
-        if (warehouseChange instanceof PickUpRackChange) System.out.println("Picking up");
-
         sendMessage(
                 "{"
                         + surroundString("command") + ": " + surroundString(warehouseChange.getCommand()) + ","

@@ -148,11 +148,11 @@ public class Robot extends MovableObject implements CanHoldRacks {
     private WarehouseChange dropOffRack(DropOffRack dropOffRackTask)
     {
         // TODO: CHECK THE NULL POINTER EXCEPTION
-        Rack r = this.pickedUpRack;
-        setRack(null);
+        Rack r = dropOffRackTask.getRackToDropOff();
         dropOffRackTask.getDropOffPosition().setRack(r);
         r.setAvailability(true);
         r.setHolder(dropOffRackTask.getDropOffPosition());
+        setRack(null);
 
         return new DropOffRackChange(this, dropOffRackTask.getDropOffPosition(), r);
     }
@@ -184,14 +184,16 @@ public class Robot extends MovableObject implements CanHoldRacks {
      * Sets the picked up Rack of the Robot
      * @param rack Rack that is picked up
      */
+    @Override
     public void setRack(Rack rack) {
         this.pickedUpRack = rack;
     }
 
-    /**\
+    /**
      * Returns the Rack that the Robot is carrying right now
      * @return The Rack that the Robot carries
      */
+    @Override
     public Rack getRack() {
         return this.pickedUpRack;
     }
