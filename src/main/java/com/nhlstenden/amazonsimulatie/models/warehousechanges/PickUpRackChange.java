@@ -1,9 +1,8 @@
 package com.nhlstenden.amazonsimulatie.models.warehousechanges;
 
+import com.nhlstenden.amazonsimulatie.jsonBuilders.JSONBuilder;
 import com.nhlstenden.amazonsimulatie.models.objects.Rack;
 import com.nhlstenden.amazonsimulatie.models.objects.Robot;
-
-import static com.nhlstenden.amazonsimulatie.helpers.JSONHelper.createKeyValueJSON;
 
 /**
  * The PickUpRackChange class contains all the information the client needs about a Rack that is picked up
@@ -29,11 +28,10 @@ public class PickUpRackChange implements WarehouseChange {
      */
     @Override
     public String getParametersString() {
-        StringBuilder string = new StringBuilder("{");
-        string.append(createKeyValueJSON("robot", robot.getUUID())).append(",");
-        string.append(createKeyValueJSON("rack", rack.getUUID()));
-        string.append("}");
-        return string.toString();
+        return new JSONBuilder()
+                .put("robot", robot.getUUID())
+                .put("rack", rack.getUUID())
+                .toString();
     }
 
     /**

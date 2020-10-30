@@ -7,7 +7,7 @@ import Walkway from './Walkway.js';
 const buildRackpositions = (rackPositions) => {
     let group = new THREE.Group();
     let length = 0, width = 0;
-    
+
     rackPositions.forEach(pos => {
         const geometry = new THREE.PlaneGeometry(1, 1, 32);
         const material = new THREE.MeshPhongMaterial({

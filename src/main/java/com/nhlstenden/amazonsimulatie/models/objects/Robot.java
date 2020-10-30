@@ -147,7 +147,6 @@ public class Robot extends MovableObject implements CanHoldRacks {
      */
     private WarehouseChange dropOffRack(DropOffRack dropOffRackTask)
     {
-        // TODO: CHECK THE NULL POINTER EXCEPTION
         Rack r = dropOffRackTask.getRackToDropOff();
         dropOffRackTask.getDropOffPosition().setRack(r);
         r.setAvailability(true);

@@ -1,9 +1,8 @@
 package com.nhlstenden.amazonsimulatie.models.warehousechanges;
 
+import com.nhlstenden.amazonsimulatie.jsonBuilders.JSONBuilder;
 import com.nhlstenden.amazonsimulatie.models.objects.MovableObject;
 import com.nhlstenden.amazonsimulatie.models.objects.Robot;
-
-import static com.nhlstenden.amazonsimulatie.helpers.JSONHelper.surroundString;
 
 /**
  * The PositionChange class contains all the information the client needs about an object that changed it's Position
@@ -26,22 +25,20 @@ public class PositionChange implements WarehouseChange {
      */
     @Override
     public String getParametersString() {
-        String str =  "{"
-                + surroundString("uuid") + ":" + surroundString(movedObject.getUUID()) + ","
-                + surroundString("type") + ":" + surroundString(movedObject.getType()) + ",";
+        JSONBuilder jsonBuilder = new JSONBuilder();
+        jsonBuilder
+                .put("uuid", movedObject.getUUID())
+                .put("type", movedObject.getType())
+                .put("x", movedObject.getX())
+                .put("y", movedObject.getY())
+                .put("z", movedObject.getZ())
+                .put("rotationX", movedObject.getRotationX())
+                .put("rotationY", movedObject.getRotationY())
+                .put("rotationZ", movedObject.getRotationZ());
         if (movedObject instanceof Robot)
             if (((Robot) movedObject).getRack() != null)
-                str += surroundString("rack") + ":" + surroundString(((Robot)movedObject).getRack().getUUID()) + ",";
-
-        str +=
-                surroundString("x") + ":" + movedObject.getX() + ","
-                        + surroundString("y") + ":" + movedObject.getY() + ","
-                        + surroundString("z") + ":" + movedObject.getZ() + ","
-                        + surroundString("rotationX") + ":" + movedObject.getRotationX() + ","
-                        + surroundString("rotationY") + ":" + movedObject.getRotationY() + ","
-                        + surroundString("rotationZ") + ":" + movedObject.getRotationZ()
-                        + "}";
-        return str;
+                jsonBuilder.put("rack", ((Robot)movedObject).getRack().getUUID());
+        return jsonBuilder.toString();
     }
 
     /**

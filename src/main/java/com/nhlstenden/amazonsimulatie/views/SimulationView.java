@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 
 import com.nhlstenden.amazonsimulatie.base.Command;
+import com.nhlstenden.amazonsimulatie.jsonBuilders.JSONArrayBuilder;
+import com.nhlstenden.amazonsimulatie.jsonBuilders.JSONBuilder;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
 
 import com.nhlstenden.amazonsimulatie.models.objects.Robot;
@@ -14,75 +16,89 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 /**
- * The default
+ * This is the view that sends the information regarding the simulation to the client
  */
 public class SimulationView {
     private final WebSocketSession session;
     private Command onClose;
 
+    /**
+     * Adds the session to this specific view
+     * @param session The WebSocketSession with the browser
+     */
     public SimulationView(WebSocketSession session) {
         this.session = session;
     }
 
-    /*
-     * Deze methode wordt aangroepen vanuit de controller wanneer er een update voor
-     * de views is. Op elke view wordt dan de update methode aangroepen, welke een
-     * JSON pakketje maakt van de informatie die verstuurd moet worden. Deze JSON
-     * wordt naar de browser verstuurd, welke de informatie weer afhandeld.
+    /**
+     * This function is used when the View is added
+     * It sends the data about the Object3D to the browser with the build command
+     * @param data The object to send to the client
      */
     public void build(Object3D data) {
-        sendMessage("{"
-                + surroundString("command") + ": " + surroundString("build") + ","
-                + surroundString("parameters") + ": " + jsonifyObject3D(data)
-                + "}");
-    }
-
-    public void sendRackPositions(List<RackPosition> rackPositions)
-    {
-        int amountOfPositions = rackPositions.size();
-
-        StringBuilder stringBuilder = new StringBuilder("{"
-                + surroundString("command") + ": " + surroundString("rack_positions") + ","
-                + surroundString("parameters") + ": " + "[");
-        for (int i = 0; i < amountOfPositions; i++)
-        {
-            RackPosition rackPosition = rackPositions.get(i);
-
-            stringBuilder.append("{");
-            stringBuilder.append(surroundString("uuid")).append(": ").append(surroundString(rackPosition.getUUID())).append(",");
-            stringBuilder.append(surroundString("x")).append(": ").append(surroundString(Double.toString(rackPosition.getPosition().getX()))).append(",");
-            stringBuilder.append(surroundString("y")).append(": ").append(surroundString(Double.toString(rackPosition.getPosition().getY()))).append(",");
-            stringBuilder.append(surroundString("z")).append(": ").append(surroundString(Double.toString(rackPosition.getPosition().getZ())));
-            if (rackPosition.getRack() != null) stringBuilder.append(",").append(surroundString("rack")).append(": ").append(surroundString(rackPosition.getRack().getUUID()));
-            stringBuilder.append("}");
-            if (i + 1 == amountOfPositions) stringBuilder.append("]");
-            else stringBuilder.append(",");
-        }
-        stringBuilder.append("}");
-        sendMessage(stringBuilder.toString());
-    }
-
-    public void sendWorldChange(WarehouseChange warehouseChange) {
         sendMessage(
-                "{"
-                        + surroundString("command") + ": " + surroundString(warehouseChange.getCommand()) + ","
-                        + surroundString("parameters") + ": " + warehouseChange.getParametersString()
-                + "}"
+            new JSONBuilder()
+                .put("command", "build")
+                .put("parameters", jsonifyObject3D(data)).toString()
         );
     }
 
-    public void sendNode(String event, Node node)
+    /**
+     * Sends a List of RackPositions to the client
+     * @param rackPositions RackPosition to send
+     */
+    public void sendRackPositions(List<RackPosition> rackPositions)
     {
-        sendMessage("{"
-                + surroundString("command") + ": " + surroundString(event) + ","
-                + surroundString("parameters") + ": " + "{"
-                + surroundString("x") + ":" + node.getPosition().getX() + ","
-                + surroundString("y") + ":" + node.getPosition().getY() + ","
-                + surroundString("z") + ":" + node.getPosition().getZ()
-                + "}"
-                + "}");
+        // Create the JSON array with all the RackPositions
+        JSONArrayBuilder jsonArrayRackPositions = new JSONArrayBuilder();
+        for (RackPosition rackPosition : rackPositions) {
+            JSONBuilder jsonBuilder = new JSONBuilder();
+            jsonBuilder
+                    .put("uuid", rackPosition.getUUID())
+                    .put("x", rackPosition.getX())
+                    .put("y", rackPosition.getY())
+                    .put("z", rackPosition.getZ());
+            if (rackPosition.getRack() != null) jsonBuilder.put("rack", rackPosition.getRack().getUUID());
+            jsonArrayRackPositions.put(jsonBuilder);
+        }
+
+        // Put everything in the JSONBuilder and send it
+        JSONBuilder jsonBuilder = new JSONBuilder()
+            .put("command", "rack_positions")
+            .put("parameters", jsonArrayRackPositions);
+        sendMessage(jsonBuilder.toString());
     }
 
+    /**
+     * Sends a WarehouseChange to the client
+     * @param warehouseChange WarehouseChange to send
+     */
+    public void sendWorldChange(WarehouseChange warehouseChange) {
+        sendMessage(
+                new JSONBuilder()
+                    .put("command", warehouseChange.getCommand())
+                    .putNoSurrounding("parameters", warehouseChange.getParametersString())
+                        .toString()
+        );
+    }
+
+    // TODO: Delete this function!!!!!!!
+    public void sendNode(String event, Node node)
+    {
+        sendMessage(
+                new JSONBuilder()
+                        .put("command", event)
+                        .put("parameters", new JSONBuilder()
+                            .put("x", node.getPosition().getX())
+                            .put("y", node.getPosition().getY())
+                            .put("z", node.getPosition().getZ())
+                        ).toString());
+    }
+
+    /**
+     * Set the command to execute when the WebSocketSession is closed
+     * @param command Command to execute
+     */
     public void onViewClose(Command command) {
         onClose = command;
     }
@@ -101,32 +117,27 @@ public class SimulationView {
         }
     }
 
-    /*
-     * Deze methode maakt van een Object3D object een JSON pakketje om verstuurd te worden
-     * naar de client.
+    /**
+     * Takes in an Object3D and return the JSONBuilder with all the data
+     * @param object Object3D to create the JSONBuilder of
+     * @return The JSONBuilder with the Object3D data
      */
-    private String jsonifyObject3D(Object3D object) {
-        String str =   "{"
-                + surroundString("uuid") + ":" + surroundString(object.getUUID()) + ","
-                + surroundString("type") + ":" + surroundString(object.getType()) + ",";
+    private JSONBuilder jsonifyObject3D(Object3D object) {
+        JSONBuilder json = new JSONBuilder()
+                .put("uuid", object.getUUID())
+                .put("type", object.getType())
+                .put("x", object.getX())
+                .put("y", object.getY())
+                .put("z", object.getZ())
+                .put("rotationX", object.getRotationX())
+                .put("rotationY", object.getRotationY())
+                .put("rotationZ", object.getRotationZ());
 
-        if (object instanceof Robot)
-            if (((Robot) object).getRack() != null)
-                str += surroundString("rack") + ":" + surroundString(((Robot)object).getRack().getUUID()) + ",";
-            else str += surroundString("rack") + ":" + surroundString("undefined") + ",";
-
-        str += surroundString("x") + ":" + object.getX() + ","
-                + surroundString("y") + ":" + object.getY() + ","
-                + surroundString("z") + ":" + object.getZ() + ","
-                + surroundString("rotationX") + ":" + object.getRotationX() + ","
-                + surroundString("rotationY") + ":" + object.getRotationY() + ","
-                + surroundString("rotationZ") + ":" + object.getRotationZ()
-              + "}";
-
-        return str;
-    }
-
-    private String surroundString(String s) {
-        return "\"" + s + "\"";
+        if (object instanceof Robot) {
+            // If the rack != null the value will contain the UUID else it will be undefined
+            String rack = ((Robot) object).getRack() != null ? ((Robot) object).getRack().getUUID() : "undefined";
+            json.put("rack", rack);
+        }
+        return json;
     }
 }

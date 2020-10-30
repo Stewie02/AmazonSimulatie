@@ -1,10 +1,9 @@
 package com.nhlstenden.amazonsimulatie.models.warehousechanges;
 
+import com.nhlstenden.amazonsimulatie.jsonBuilders.JSONBuilder;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.CanHoldRacks;
 import com.nhlstenden.amazonsimulatie.models.objects.Rack;
 import com.nhlstenden.amazonsimulatie.models.objects.Robot;
-
-import static com.nhlstenden.amazonsimulatie.helpers.JSONHelper.createKeyValueJSON;
 
 /**
  * The DropOffRackChange holds all the information the client needs to know about a Rack that is dropped off
@@ -33,10 +32,10 @@ public class DropOffRackChange implements WarehouseChange {
      */
     @Override
     public String getParametersString() {
-        return "{" +
-                  createKeyValueJSON("robot", dropper.getUUID()) + "," +
-                  createKeyValueJSON("position", newHolder.getUUID()) +
-                "}";
+        return new JSONBuilder()
+                .put("robot", dropper.getUUID())
+                .put("position", newHolder.getUUID())
+                .toString();
     }
 
     public String getCommand() {

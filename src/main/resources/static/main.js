@@ -41,6 +41,7 @@ window.onload = function () {
 function commandHandler(command) {
     switch (command.command) {
         case "rack_positions":
+            console.log(command.parameters);
             buildWarehouse(command.parameters);
             break;
         case "build":
