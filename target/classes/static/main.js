@@ -15,6 +15,20 @@ const meshLoader = new PreMeshLoader()
 window.onload = function () {
     world = new World();
 
+    commandHandler({
+        command: 'build',
+        parameters: {
+            uuid: 'man',
+            type: 'manager',
+            x: 50,
+            y: 5,
+            z: 10,
+            rotationX: 0,
+            rotationY: 270,
+            rotationZ: 0
+        }
+    });
+
     document.getElementById('darkMode').addEventListener("click", toggleDarkMode);
     document.getElementById('sound').addEventListener("click", toggleSound);
     document.getElementById('rotate').addEventListener("click", toggleRotation);
@@ -27,6 +41,7 @@ window.onload = function () {
 function commandHandler(command) {
     switch (command.command) {
         case "rack_positions":
+            console.log(command.parameters);
             buildWarehouse(command.parameters);
             break;
         case "build":
@@ -36,21 +51,45 @@ function commandHandler(command) {
             update(command.parameters);
             break;
         case "pick_up":
+            console.log(command);
             pickUp(command.parameters);
             break;
         case "drop_off":
             dropOff(command.parameters);
             break;
         case "node":
-//            const node = new TestNode(.2);
-//            const pos = command.parameters;
-//            node.moveTo(pos.x, pos.y, pos.z);
-//            world.addObject( node );
+            const node = new TestNode(1);
+            const pos = command.parameters;
+            node.moveTo(pos.x, pos.y, pos.z);
+            world.addObject( node );
             break;
         default:
             console.log("command did not match");
             break;
     }
+}
+
+function buildWarehouse(parameters) {
+    const warehouse = new WareHouse( parameters );
+    capacity = warehouse.rackSpots.mesh.children.length
+    document.getElementById('capacity').innerText = capacity;
+    warehouse.rackSpots.mesh.children.map(spot => {
+        if (spot.userData.occupied) {
+            build({
+                uuid: spot.userData.uuid,
+                type: "rack",
+                x: spot.position.x,
+                y: 0.85,
+                z: spot.position.z,
+                rotationX: 0,
+                rotationY: 0,
+                rotationZ: 0
+            })
+        }
+    })
+    world.init(warehouse.length, warehouse.width);
+    world.addObject( warehouse );
+    updateDashboard();
 }
 
 async function build(parameters) {
@@ -101,30 +140,8 @@ async function build(parameters) {
     }
 }
 
-function buildWarehouse(parameters) {
-    const warehouse = new WareHouse( parameters );
-    capacity = warehouse.rackSpots.mesh.children.length
-    document.getElementById('capacity').innerText = capacity;
-    warehouse.rackSpots.mesh.children.map(spot => {
-        if (spot.userData.occupied) {
-            build({
-                uuid: spot.userData.uuid,
-                type: "rack",
-                x: spot.position.x,
-                y: 0.85,
-                z: spot.position.z,
-                rotationX: 0,
-                rotationY: 0,
-                rotationZ: 0
-            })
-        }
-    })
-    world.init(warehouse.length, warehouse.width);
-    world.addObject( warehouse );
-    updateDashboard();
-}
-
 function update(parameters) {
+    //update meters run
     let object = world.worldObjects[parameters.uuid];
     let x =  object.mesh.position.x - parameters.x;
     let y = object.mesh.position.y - parameters.y;
@@ -133,7 +150,25 @@ function update(parameters) {
     const deltaY = Math.sqrt(y * y);
     const deltaZ = Math.sqrt(z * z);
     object.mesh.userData.metersRun += deltaX + deltaY + deltaZ;
+
+    //build rack if requested
+    if (parameters.rack !== undefined && object.mesh.children[1] === undefined) {
+        build({
+            uuid: parameters.rack,
+            type: "rack",
+            x: 0,
+            y: 0.85,
+            z: 0,
+            rotationX: 0,
+            rotationY: 0,
+            rotationZ: 0
+        })
+        object.pickUp( world.worldObjects[parameters.rack].getMesh() )
+    }
+
+    //update position en rotation
     object.moveTo(parameters.x, parameters.y, parameters.z);
+    object.rotate(parameters.rotationX, parameters.rotationY, parameters.rotationZ);
 }
 
 function pickUp(parameters) {
@@ -141,9 +176,10 @@ function pickUp(parameters) {
 }
 
 function dropOff(parameters) {
-    world.worldObjects[parameters.robot].dropOff(world, parameters.position)
+    world.worldObjects[parameters.robot].dropOff( world, parameters.position )
 }
 
+//frontend
 function toggleDarkMode(event) {
     let walls = world.scene.getObjectByName("walls")
     let buttons = document.getElementsByClassName('tDark');
@@ -184,7 +220,7 @@ function toggleSound(event) {
 }
 
 function toggleRotation(event) {
-    world.cameraControls.autoRotate ? world.cameraControls.autoRotate = false : world.cameraControls.autoRotate = true;
+    world.cameraControls.autoRotate = world.cameraControls.autoRotate ? false : true;
 }
 
 function centerCam(event) {
@@ -201,7 +237,7 @@ function updateDashboard() {
         let deltaMeters = metersRun - object.userData.lastMetersRun;
         object.userData.lastMetersRun = metersRun;
         const kmh = deltaMeters * 3.6;
-
+        
         switch (object.name) {
             case "simpleRack":
                 racks++;
@@ -214,7 +250,6 @@ function updateDashboard() {
                 break;
         }
     })
-
     document.getElementById('occupationLevel').innerText = Math.round((racks / capacity)*100);
     document.getElementById('nrRacks').innerHTML = racks;
     document.getElementById('nrRobots').innerHTML = robots;

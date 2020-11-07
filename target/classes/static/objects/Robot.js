@@ -21,63 +21,31 @@ export default class Robot extends MovableObject{
         group.name = "robot";
         group.uuid = uuid;
 
-        let callName = "Robert"
-        switch (robotNumber) {
-            case 1:
-                callName = "John"
-                break;
-            case 2:
-                callName = "Todd"
-                break;
-            case 3:
-                callName = "Suzanne"
-                break;   
-            case 4:
-                callName = "Nigel"
-                break;   
-            case 5:
-                callName = "Tyler"
-                break;   
-            case 6:
-                callName = "Alice"
-                break;  
-            case 7:
-                callName = "Arnold"
-                break;   
-            case 8:
-                callName = "Frank"
-                break;   
-            case 9:
-                callName = "Tony"
-                break;   
-            case 10:
-                callName = "Rick"
-                break;    
-            default:
-                break;
-        }
+        const names = ['John', 'Todd', 'Suzanne', 'Nigel', 'Tyler', 'Alice', 'Arnold', 'Frank', 'Tony', 'Rick'];
+        let callName = names[robotNumber - 1];
 
         group.userData.name = callName;
         group.userData.number = robotNumber;
         group.userData.movedItems = 0;
         group.userData.metersRun = 0;
         group.userData.lastMetersRun = 0;
-
-        
-       
         super(group);
     }
 
     pickUp(object) {
-        this.mesh.userData.movedItems++;
-        object.position.set(0, object.position.y + .3, 0);
-        this.mesh.add(object);
+        if ( this.mesh.children[1] === undefined ) {
+            this.mesh.userData.movedItems++;
+            object.position.set(0, object.position.y + .3, 0);
+            this.mesh.add(object);
+        } else {
+            console.log("[Robot.js pickUp] Robots can only pick up one rack at a time")
+        }
     }
 
     dropOff(world, dropOffPointUuid) {
         const dropable = this.mesh.children[1];
-        if ( dropOffPointUuid != undefined ) {
-            const dropOffPoint = world.scene.getObjectByProperty( 'uuid', dropOffPointUuid);
+        const dropOffPoint = world.scene.getObjectByProperty( 'uuid', dropOffPointUuid);
+        if ( dropOffPointUuid != undefined && dropOffPoint.name != "truck") {
             dropable.position.x = dropOffPoint.position.x;
             dropable.position.y -= 0.3;
             dropable.position.z = dropOffPoint.position.z;

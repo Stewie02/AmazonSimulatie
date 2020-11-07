@@ -1,28 +1,36 @@
 package com.nhlstenden.amazonsimulatie.models.tasks;
 
-import com.nhlstenden.amazonsimulatie.models.CanHoldRacks;
-import com.nhlstenden.amazonsimulatie.models.Rack;
+import com.nhlstenden.amazonsimulatie.models.objects.Rack;
+import com.nhlstenden.amazonsimulatie.models.objects.interfaces.CanHoldRacks;
 
+/**
+ * The DropOffRack contains all the information the Robot needs to drop off a Rack
+ */
 public class DropOffRack implements Task {
 
-    private final Rack rackToDropOff;
     private final CanHoldRacks dropOffPosition;
+    private final Rack rackToDropOff;
 
-    public DropOffRack(Rack rackToDropOff, CanHoldRacks dropOffPosition) {
-        this.rackToDropOff = rackToDropOff;
+    /**
+     * Takes in the Rack that needs to be dropped off
+     * And the CanHoldRacks object that will hold the Rack
+     * @param dropOffPosition The Position to drop it to
+     * @param rackToDropOff The Rack that will be dropped off
+     */
+    public DropOffRack(CanHoldRacks dropOffPosition, Rack rackToDropOff) {
         this.dropOffPosition = dropOffPosition;
+        this.rackToDropOff = rackToDropOff;
     }
 
-    public Rack getRackToDropOff() {
-        return this.rackToDropOff;
-    }
-
+    /**
+     * Returns the drop off Position
+     * @return The drop off Position
+     */
     public CanHoldRacks getDropOffPosition() {
         return this.dropOffPosition;
     }
 
-    @Override
-    public String getType() {
-        return DropOffRack.class.getSimpleName();
+    public Rack getRackToDropOff() {
+        return this.rackToDropOff;
     }
 }

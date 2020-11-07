@@ -4,29 +4,25 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nhlstenden.amazonsimulatie.models.Model;
-import com.nhlstenden.amazonsimulatie.views.View;
+import com.nhlstenden.amazonsimulatie.models.WarehouseManager;
+import com.nhlstenden.amazonsimulatie.views.SimulationView;
 
-/*
- * Dit is de abstracte controller class. Deze class is abstract omdat het een soort
- * standaard controller is. De class heeft standaardfunctionaliteit voor het managen
- * van een model en een aantal views. Ook kun je de controller aanzetten via de start()
- * methode. Wanneer dit gebeurd wordt een nieuwe thread opgestart waarin de controller
- * de run() methode uitvoerd. Je kunt de controller dus "runnen" binnen een aparte thread.
- * De rest van de functionaliteit, zoals wat de controller precies moet doen in de run()
- * methode, kun je later zelf nog invullen door verder te bouwen op deze class.
+/**
+ * This abstract controller class has some standard functionality for running a simulation.
+ * The controller has the run function which needs the be called, then the simulation will be updated
  */
 public abstract class Controller implements Runnable, PropertyChangeListener {
-    private final List<View> views;
-    protected Model model;
 
-    public Controller(Model model) {
-        this(model, new ArrayList<View>());
+    private final List<SimulationView> views;
+    protected final WarehouseManager warehouseManager;
+
+    public Controller(WarehouseManager model) {
+        this(model, new ArrayList<>());
     }
 
-    public Controller(Model model, List<View> views) {
-        this.model = model;
-        this.model.addObserver(this); //Automatisch wordt deze controller toegevoegd aan het model om updates te ontvangen.
+    public Controller(WarehouseManager model, List<SimulationView> views) {
+        this.warehouseManager = model;
+        this.warehouseManager.addObserver(this);
         this.views = new ArrayList<>(views);
     }
 
@@ -34,37 +30,29 @@ public abstract class Controller implements Runnable, PropertyChangeListener {
      * First the new view execute the onViewAdded function
      * This is because we can send the initialisation data so the client can build the world
      * After this we'll add the view to the views to send the new data
-     * @param view
+     * @param view View to add
      */
-    public void addView(View view) {
+    public void addView(SimulationView view) {
         this.onViewAdded(view);
         this.views.add(view);
     }
 
-    /*
-     * Deze methode kan later geïmplementeerd worden om aan te geven wat er moet
-     * gebeuren met een view die nieuw toegevoegd wordt aan de controller.
+    /**
+     * This method is called when a view is added
+     * @param view View that is added
      */
-    protected abstract void onViewAdded(View view);
+    protected abstract void onViewAdded(SimulationView view);
 
     /**
      * Returns the views list. Be advised that this is the internal list, for use by the controller only.
      * @return The internal list of views.
      */
-    protected List<View> getViews() {
+    protected List<SimulationView> getViews() {
         return this.views;
     }
 
-    protected void removeView(View view) {
+    protected void removeView(SimulationView view) {
         this.views.remove(view);
-    }
-
-    /**
-     * Returns the internal model used by the controller.
-     * @return The internal model.
-     */
-    protected Model getModel() {
-        return this.model;
     }
 
     /**

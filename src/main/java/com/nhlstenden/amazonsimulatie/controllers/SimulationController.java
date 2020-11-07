@@ -1,105 +1,72 @@
 package com.nhlstenden.amazonsimulatie.controllers;
 
 import java.beans.PropertyChangeEvent;
-import java.util.List;
 
-import com.nhlstenden.amazonsimulatie.base.Command;
-import com.nhlstenden.amazonsimulatie.models.Model;
-import com.nhlstenden.amazonsimulatie.models.Object3D;
-import com.nhlstenden.amazonsimulatie.models.WorldChanges.WorldChange;
-import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
-import com.nhlstenden.amazonsimulatie.views.View;
+import com.nhlstenden.amazonsimulatie.models.WarehouseManager;
+import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
+import com.nhlstenden.amazonsimulatie.models.warehousechanges.WarehouseChange;
+import com.nhlstenden.amazonsimulatie.views.SimulationView;
 
-/*
- * Dit is de controller class die de simulatie beheerd. Deze class erft van
- * een generieke class Controller. Hierdoor krijgt SimulationController gratis
- * functionaliteit mee voor het managen van views en een model.
+/**
+ * This is the controller that controls the Warehouse simulation.
+ * It inherits from the abstract class Controller to give it some extra functionalities
  */
 public class SimulationController extends Controller {
 
-    public SimulationController(Model model) {
-        super(model); //Met dit onderdeel roep je de constructor aan van de superclass (Controller)
+    /**
+     * Calls the constructor of it's superclass
+     * @param warehouseManager The simulation object to run
+     */
+    public SimulationController(WarehouseManager warehouseManager) {
+        super(warehouseManager);
     }
 
-    /*
-     * Deze methode wordt aangeroepen wanneer de controller wordt gestart. De methode start een infinite
-     * while-loop op in de thread van de controller. Normaal loopt een applicatie vast in een infinite
-     * loop, maar omdat de controller een eigen thread heeft loopt deze loop eigenlijk naast de rest
-     * van het programma. Elke keer wordt een Thread.sleep() gedaan met 100 als parameter. Dat betekent
-     * 100 miliseconden rust, en daarna gaat de loop verder. Dit betekent dat ongeveer 10 keer per seconden
-     * de wereld wordt geupdate. Dit is dus in feite 10 frames per seconde.
+    /**
+     * This function is being called when the application starts
+     * It's has an infinite loop where it updates the Manager given in the constructor
      */
     @Override
     public void run() {
         while (true) {
-            sendWorldChange(this.getModel().newUpdate());
-
+            this.warehouseManager.update();
             try {
-                Thread.sleep(100);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
 
+    /**
+     * This function is called when a new WebSocketConnection is established
+     * @param view The new View
+     */
     @Override
-    protected void onViewAdded(final View view) {
+    protected void onViewAdded(final SimulationView view) {
         final Controller t = this;
 
-        /*
-         * Hier wordt een interface (Command) gebruikt om een nieuw object
-         * te maken. Dit kan binnen Java en heet een anonymous inner class.
-         * Op deze manier hoef je niet steeds een nieuwe class aan te maken
-         * voor verschillende commando's. Zeker omdat je deze code maar één
-         * keer nodig hebt.
-         */
-        view.onViewClose(new Command(){
-        
-            @Override
-            public void execute() {
-                t.removeView(view);
-            }
-        });
+        // This command will be executed when the data can't be sent
+        view.onViewClose(() -> t.removeView(view));
 
-        view.sendRackPositions(this.getModel().getRackPositions());
+        // Sends the RackPositions to the new client
+        view.sendRackPositions(this.warehouseManager.getRackPositions());
 
-        for (Node node : this.getModel().getNodes())
-        {
-            view.sendNode("node", node);
-        }
-
-        /*
-         * Dit stukje code zorgt ervoor dat wanneer een nieuwe view verbinding maakt, deze view één
-         * keer alle objecten krijgt toegestuurd, ook als deze objecten niet updaten. Zo voorkom je
-         * dat de view alleen objecten ziet die worden geupdate (bijvoorbeeld bewegen).
-         */
-        for (Object3D object : this.getModel().getWorldObjectsAsList()) {
-            view.update(Model.BUILD_COMMAND, object);
+        // Send the build command to the client with the object
+        for (Object3D object : this.warehouseManager.getAllMovableObjects()) {
+            view.build(object);
         }
     }
 
-    /*
-     * Deze methode wordt aangeroepen wanneer er een update van het model binnenkomt. Zo'n "event"
-     * heeft een naam en een waarde. Die worden hieronder gebruikt om een updatesignaal te sturen
-     * naar de view.
+    /**
+     * This function is called when some models is changed in the WarehouseManager
+     * @param evt The event with the data
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         for(int i = 0; i < this.getViews().size(); i++) {
-            View currentView = this.getViews().get(i);
-
+            SimulationView currentView = this.getViews().get(i);
             if(currentView != null) {
-                currentView.update(evt.getPropertyName(), (Object3D)evt.getNewValue());
-            }
-        }
-    }
-
-    private void sendWorldChange(List<WorldChange> worldChanges) {
-        for(int i = 0; i < this.getViews().size(); i++) {
-            View currentView = this.getViews().get(i);
-
-            for (WorldChange worldChange : worldChanges) {
-                currentView.sendWorldChange(worldChange);
+                currentView.sendWorldChange((WarehouseChange) evt.getNewValue());
             }
         }
     }
