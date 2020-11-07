@@ -6,7 +6,6 @@ import Robot from './objects/Robot.js';
 import Truck from './objects/imported/Truck/Truck.js';
 import SimpleRack from './objects/SimpleRack.js';
 import Manager from './objects/imported/Manager/Manager.js';
-import TestNode from './objects/TestNode.js';
 
 let world, capacity;
 let robotCount = 1;
@@ -24,13 +23,13 @@ window.onload = function () {
     document.getElementById('rotate').addEventListener("click", toggleRotation);
     document.getElementById('centerCam').addEventListener("click", centerCam);
 
-    //websocket, connects to server and parses the data to pass it on to the commandHandler fucntion.
+    //websocket, connects to server and parses the data to pass it on to the commandHandler function.
     const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port + "/connectToSimulation");
     socket.onmessage = event => commandHandler( JSON.parse(event.data) );
 }
 
 /**
- * Handles the incomming commands from the websocket
+ * Handles the incoming commands from the websocket
  * @param {string} command
  */
 function commandHandler(command) {
@@ -51,12 +50,6 @@ function commandHandler(command) {
         case "drop_off":
             dropOff(command.parameters);
             break;
-        case "node":
-            const node = new TestNode(1);
-            const pos = command.parameters;
-            node.moveTo(pos.x, pos.y, pos.z);
-            world.addObject( node );
-            break;
         default:
             console.log("command did not match");
             break;
@@ -64,10 +57,10 @@ function commandHandler(command) {
 }
 
 /**
- * Builds the warehouse to the desired dimentions. 
+ * Builds the warehouse to the desired dimensions.
  * And reads the capacity for display.
  * Also if a rack position is meant to be occupied a rack will be build on the position.
- * Finaly the world will be created and the warehouse will be added to it.
+ * Finally the world will be created and the warehouse will be added to it.
  * At last the dashboard update loop wil be initialised. 
  * @param {object} parameters Rack positions
  */
@@ -99,14 +92,14 @@ function buildWarehouse(parameters) {
 
 /**
  * Builds any 3d object that can be build in this world.
- * For 3d objects that we be display muliple times a pre mesh loader helps to ensure that the texures will only be loaded once.
+ * For 3d objects that we be display multiple times a pre mesh loader helps to ensure that the textures will only be loaded once.
  * This function is async because we have to wait before the an imported object is loaded before we can manipulate its mesh.
  * @param {object} parameters 
  */
 async function build(parameters) {
     switch (parameters.type) {
         case "robot":
-            //Build robot with UUID to keep track of it, pre loaded mesh for preformance, and robotCount to give it a name and a top-sticker.
+            //Build robot with UUID to keep track of it, pre loaded mesh for performance, and robotCount to give it a name and a top-sticker.
             let robot = new Robot( parameters.uuid, meshLoader.robot, robotCount ); 
             robot.moveTo(parameters.x, parameters.y, parameters.z);
             robot.rotate(parameters.rotationX, parameters.rotationY, parameters.rotationZ);
@@ -129,7 +122,7 @@ async function build(parameters) {
             }
             break;
         case "rack":
-            let simpleRack = new SimpleRack( parameters.uuid, meshLoader.simpleRack ); //Pre mesh loader helps with preformance
+            let simpleRack = new SimpleRack( parameters.uuid, meshLoader.simpleRack ); //Pre mesh loader helps with performance
             simpleRack.moveTo(parameters.x, parameters.y, parameters.z);
             simpleRack.rotate(parameters.rotationX, parameters.rotationY, parameters.rotationZ);
             world.addObject( simpleRack );
@@ -209,7 +202,7 @@ function dropOff(parameters) {
 }
 
 /**
- * Toggles the darkmode.
+ * Toggles the dark mode.
  * Sets: warehouse wall color, scene color, fog color, buttons background and letter color, and changes the skybox map texture.
  */
 function toggleDarkMode() {
