@@ -1,5 +1,11 @@
 import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r119/build/three.module.js';
 
+/**
+ * Builds the light bulb.
+ * @param {Float} x 
+ * @param {Float} y 
+ * @param {Float} z 
+ */
 const lightBulb = (x, y, z) => {
     const radius = 0.1;
     const widthSegments = 10;
@@ -9,13 +15,22 @@ const lightBulb = (x, y, z) => {
         color: 0x333333,
         emissive: 0xffffff,
         specular: 0xffffff,
-        fog: false
+        fog: false //Only the truck is affected by fog.
     } );
     let mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(x, y, z);
     return mesh;
 }
 
+
+/**
+ * Builds the fixture.
+ * @param {Float} x 
+ * @param {Float} y 
+ * @param {Float} z 
+ * @param {Float} radius 
+ * @param {Float} height 
+ */
 const fixture = (x, y, z, radius, height) => {
     const radialSegments = 25;  
     const heightSegments = 1;  
@@ -30,7 +45,7 @@ const fixture = (x, y, z, radius, height) => {
         color: 0x898984,
         emissive: 0x0,
         specular: 0xffffff,
-        fog: false,
+        fog: false, //Only the truck is affected by fog.
         side: THREE.BackSide
     } );
     let mesh = new THREE.Mesh(geometry, material);
@@ -39,6 +54,12 @@ const fixture = (x, y, z, radius, height) => {
 }
 
 export default class SpotLight {
+    /**
+     * Builds a spotlight group.
+     * @param {Float} x 
+     * @param {Float} y 
+     * @param {Float} z 
+     */
     constructor(x, y, z) {
         let lightGroup = new THREE.Group();
         const radius =  0.5;  
@@ -58,6 +79,7 @@ export default class SpotLight {
         spotLight.shadow.camera.far = 500;
         spotLight.shadow.focus = 1;
         
+        //Needed to make the light aim down to the ground
         let targetObject = new THREE.Object3D();
         targetObject.position.x = x;
         targetObject.position.z = z;

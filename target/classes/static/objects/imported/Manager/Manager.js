@@ -5,7 +5,11 @@ export default class Truck extends MovableObject {
     constructor(){
         super()
     }
-
+    
+    /**
+     * Async loads the manager mesh.
+     * @param {String} uuid 
+     */
     async loadObject(uuid) {
         let mesh = await loadGLTF('objects/imported/Manager/uploads_files_2578203_M009.glb');
         mesh.scale.set(15, 15, 15);

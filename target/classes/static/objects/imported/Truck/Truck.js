@@ -6,6 +6,10 @@ export default class Truck extends MovableObject {
         super()
     }
 
+    /**
+     * Async loads the truck mesh.
+     * @param {String} uuid 
+     */
     async loadObject(uuid) {
         let mesh = await loadGLTF('objects/imported/Truck/delivery.glb');
         mesh.scale.set(3,3,3)
