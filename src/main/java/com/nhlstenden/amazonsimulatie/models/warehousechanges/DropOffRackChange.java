@@ -2,7 +2,6 @@ package com.nhlstenden.amazonsimulatie.models.warehousechanges;
 
 import com.nhlstenden.amazonsimulatie.jsonBuilders.JSONBuilder;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.CanHoldRacks;
-import com.nhlstenden.amazonsimulatie.models.objects.Rack;
 import com.nhlstenden.amazonsimulatie.models.objects.Robot;
 
 /**
@@ -12,18 +11,15 @@ public class DropOffRackChange implements WarehouseChange {
 
     private final Robot dropper;
     private final CanHoldRacks newHolder;
-    private final Rack rack;
 
     /**
      * This constructor takes in different information about the change and stores them
-     * @param dropper The Robot that dropped the Rack
+     * @param dropper The Robot that will drop the Rack
      * @param newHolder The new holder of the Rack
-     * @param rack The rack that is dropped
      */
-    public DropOffRackChange(Robot dropper, CanHoldRacks newHolder, Rack rack) {
+    public DropOffRackChange(Robot dropper, CanHoldRacks newHolder) {
         this.dropper = dropper;
         this.newHolder = newHolder;
-        this.rack = rack;
     }
 
     /**

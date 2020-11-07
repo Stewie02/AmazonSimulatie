@@ -7,10 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 
 public class DijkstraTest {
 
@@ -38,27 +35,21 @@ public class DijkstraTest {
         connectNodes(c, e);
         connectNodes(d, e);
 
-        List<Node> nodeList = new ArrayList<>(Arrays.asList(a, b, c, d, e));
+        Dijkstra dijkstra = new Dijkstra(new ArrayList<>(Arrays.asList(a, b, c, d, e)));
 
-        Dijkstra dijkstra = new Dijkstra(nodeList);
         List<Position> actual = dijkstra.giveShortestPath(a.getPosition(), d);
-
         List<Position> expected = new ArrayList<>(Arrays.asList(e.getPosition(), d.getPosition()));
 
         int min = Math.min(actual.size(), expected.size());
-
-        System.out.println("Actual: " + actual.size() + "   Expected: " + expected.size());
-
         boolean same = actual.size() == expected.size();
+
         for (int i = 0; i < min; i++) {
             if (!samePos(actual.get(i), expected.get(i))) {
                 same = false;
                 break;
             }
         }
-
         assertSame(same, true);
-
     }
 
     private boolean samePos(Position pos1, Position pos2) {

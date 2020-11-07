@@ -7,8 +7,8 @@ public class RealPosition implements Position {
     /**
      * Sets the x, y and z-coordinate to the x, y and z given as parameter
      * @param x The X-coordinate
-     * @param y
-     * @param z
+     * @param y The Y-coordinate
+     * @param z The Z-coordinate
      */
     public RealPosition(double x, double y, double z)
     {

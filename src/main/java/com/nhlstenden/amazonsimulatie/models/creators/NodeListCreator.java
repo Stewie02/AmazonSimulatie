@@ -92,6 +92,24 @@ public class NodeListCreator {
             }
         }
 
+        // Creating the bottom row of nodes
+        double distanceBetweenNodes = boxParts[0][1].getNode(0).getX() - boxParts[0][0].getNode(0).getX();
+        Node previousNode = null;
+
+        for (BoxPart boxPart : boxParts[boxParts.length - 1]) {
+            for (int i = 0; i < 3; i++) {
+                Node n = boxPart.getNode(i);
+                Node newNode = new Node(n.getX(), n.getY(), n.getZ() + distanceBetweenNodes);
+
+                if (i == 0) connectNodes(boxPart.getNode(NodeConstants.LEFT_BOTTOM), newNode);
+                if (i > 0) boxPart.getRackPosition(i+1).setAdjacentNode(newNode);
+                if (previousNode != null) connectNodes(newNode, previousNode);
+
+                nodeList.add(newNode);
+                previousNode = newNode;
+            }
+        }
+
         return nodeList;
     }
 

@@ -3,7 +3,6 @@ package com.nhlstenden.amazonsimulatie.models.objects;
 import com.nhlstenden.amazonsimulatie.models.position.Position;
 import com.nhlstenden.amazonsimulatie.models.warehousechanges.WarehouseChange;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
-import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Updatable;
 
 import java.util.UUID;
 
@@ -11,7 +10,7 @@ import java.util.UUID;
  * This abstract class is used in an object that moves.
  * It has all the properties that are used at the client side.
  */
-public abstract class MovableObject extends HasPosition implements Updatable, Object3D {
+public abstract class MovableObject extends HasPosition implements Object3D {
 
     private double rotationX, rotationY, rotationZ;
     private final UUID uuid;

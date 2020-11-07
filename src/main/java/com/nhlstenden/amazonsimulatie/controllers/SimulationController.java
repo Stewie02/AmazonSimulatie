@@ -4,7 +4,6 @@ import java.beans.PropertyChangeEvent;
 
 import com.nhlstenden.amazonsimulatie.models.WarehouseManager;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
-import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 import com.nhlstenden.amazonsimulatie.models.warehousechanges.WarehouseChange;
 import com.nhlstenden.amazonsimulatie.views.SimulationView;
 
@@ -51,10 +50,6 @@ public class SimulationController extends Controller {
 
         // Sends the RackPositions to the new client
         view.sendRackPositions(this.warehouseManager.getRackPositions());
-
-        // TODO: Delete!!!
-        for (Node node : this.warehouseManager.getNodes())
-            view.sendNode("node", node);
 
         // Send the build command to the client with the object
         for (Object3D object : this.warehouseManager.getAllMovableObjects()) {

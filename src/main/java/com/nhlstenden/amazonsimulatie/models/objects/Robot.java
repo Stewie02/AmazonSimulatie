@@ -101,7 +101,7 @@ public class Robot extends MovableObject implements CanHoldRacks {
             latestNodePosition = goToPositionTask.removeNextPosition();
             if (goToPositionTask.isFinished()) assignment.removeTask();
         }
-        // TODO: PROXY
+
         return new PositionChange(this);
     }
 
@@ -134,7 +134,6 @@ public class Robot extends MovableObject implements CanHoldRacks {
         if (pickOffRackTask.getRackToPickUp().getHolder() != null)
             pickOffRackTask.getRackToPickUp().getHolder().setRack(null);
         rack.setHolder(this);
-        rack.setAvailability(false);
 
         return new PickUpRackChange(this, rack);
     }
@@ -149,11 +148,10 @@ public class Robot extends MovableObject implements CanHoldRacks {
     {
         Rack r = dropOffRackTask.getRackToDropOff();
         dropOffRackTask.getDropOffPosition().setRack(r);
-        r.setAvailability(true);
         r.setHolder(dropOffRackTask.getDropOffPosition());
         setRack(null);
 
-        return new DropOffRackChange(this, dropOffRackTask.getDropOffPosition(), r);
+        return new DropOffRackChange(this, dropOffRackTask.getDropOffPosition());
     }
 
     /**

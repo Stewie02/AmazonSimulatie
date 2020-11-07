@@ -2,10 +2,7 @@ package com.nhlstenden.amazonsimulatie.jsonBuilders;
 
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 
 public class JSONBuilderTest {
 

@@ -45,7 +45,7 @@ public class App extends SpringBootServletInitializer implements WebSocketConfig
     }
     
     //De App is de applicatie en heeft de controller voor de simulatie in zich
-    private Controller controller;
+    private final Controller controller;
 
    /*
     * De constructor wordt uitgevoerd wanneer de app wordt opgebouwd. Je zult alleen

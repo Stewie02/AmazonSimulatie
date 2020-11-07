@@ -4,7 +4,6 @@ import com.nhlstenden.amazonsimulatie.models.Constants;
 import com.nhlstenden.amazonsimulatie.models.objects.Rack;
 import com.nhlstenden.amazonsimulatie.models.objects.RackPosition;
 import com.nhlstenden.amazonsimulatie.models.objects.Truck;
-import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 import com.nhlstenden.amazonsimulatie.models.tasks.*;
 
 import java.util.Random;
@@ -25,15 +24,14 @@ public class TaskCreator {
         Assignment assignment = new Assignment();
         Rack rackToPickUp = null;
         RackPosition pickUpPosition = null;
-        // TODO:  Remove the adjacent bit!!!
 
         // First we make pick a random RackPosition that contains a Rack
-        Node adjacent = null;
-        while (rackToPickUp == null || adjacent == null || !rackToPickUp.isAvailable()) {
+        while (rackToPickUp == null || !rackToPickUp.isAvailable()) {
             pickUpPosition = getRandomRackPosition(rackPositions);
             rackToPickUp = pickUpPosition.getRack();
-            adjacent = pickUpPosition.getAdjacentNode();
         }
+        rackToPickUp.setAvailability(false);
+
         // Here we add different tasks to the Assignment
         // First it will go to the Node next to the RackPosition, then pick it up, after that drive to the truck and drop it.
         assignment.addTask(new GoToPosition(pickUpPosition.getAdjacentNode()));
@@ -53,11 +51,9 @@ public class TaskCreator {
     public static Assignment createBringToRackPositionAssignment(RackPosition[][] rackPositions, Truck truck) {
         Assignment assignment = new Assignment();
 
-        // TODO: remove adjacent
-
         // First take a DropOffPosition which doesn't have a Rack
         RackPosition dropOffPosition = getRandomRackPosition(rackPositions);
-        while (dropOffPosition.getRack() != null || dropOffPosition.getAdjacentNode() == null) {
+        while (dropOffPosition.getRack() != null) {
             dropOffPosition = getRandomRackPosition(rackPositions);
         }
         // Create a new Rack at the Truck

@@ -9,7 +9,7 @@ import com.nhlstenden.amazonsimulatie.models.position.RealPosition;
  */
 public abstract class HasPosition {
 
-    protected RealPosition position;
+    protected final RealPosition position;
 
     /**
      * Give the x, y and z coordinates

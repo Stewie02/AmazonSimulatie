@@ -11,7 +11,6 @@ import com.nhlstenden.amazonsimulatie.models.tasks.GoToPosition;
 import com.nhlstenden.amazonsimulatie.models.tasks.Task;
 import com.nhlstenden.amazonsimulatie.models.warehousechanges.WarehouseChange;
 import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
-import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -112,14 +111,6 @@ public class WarehouseManager {
             }
         }
         return assignments;
-    }
-
-    /**
-     * Returns all the Nodes
-     * @return List of Nodes
-     */
-    public List<Node> getNodes() {
-        return this.dijkstra.getNodes();
     }
 
     /**

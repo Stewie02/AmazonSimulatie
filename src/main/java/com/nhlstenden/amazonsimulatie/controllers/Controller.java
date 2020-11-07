@@ -14,7 +14,7 @@ import com.nhlstenden.amazonsimulatie.views.SimulationView;
 public abstract class Controller implements Runnable, PropertyChangeListener {
 
     private final List<SimulationView> views;
-    protected WarehouseManager warehouseManager;
+    protected final WarehouseManager warehouseManager;
 
     public Controller(WarehouseManager model) {
         this(model, new ArrayList<>());

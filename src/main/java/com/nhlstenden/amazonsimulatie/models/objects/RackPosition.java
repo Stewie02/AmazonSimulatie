@@ -75,7 +75,8 @@ public class RackPosition extends HasPosition implements CanHoldRacks {
      * @param adjacentNode The adjacent node of the RackPosition
      */
     public void setAdjacentNode(Node adjacentNode) {
-        this.adjacentNode = adjacentNode;
+        if (this.adjacentNode == null)
+            this.adjacentNode = adjacentNode;
     }
 
 }

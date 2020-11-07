@@ -10,7 +10,6 @@ import com.nhlstenden.amazonsimulatie.models.objects.interfaces.Object3D;
 
 import com.nhlstenden.amazonsimulatie.models.objects.Robot;
 import com.nhlstenden.amazonsimulatie.models.warehousechanges.WarehouseChange;
-import com.nhlstenden.amazonsimulatie.models.pathfinding.Node;
 import com.nhlstenden.amazonsimulatie.models.objects.RackPosition;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -80,19 +79,6 @@ public class SimulationView {
                     .putNoSurrounding("parameters", warehouseChange.getParametersString())
                         .toString()
         );
-    }
-
-    // TODO: Delete this function!!!!!!!
-    public void sendNode(String event, Node node)
-    {
-        sendMessage(
-                new JSONBuilder()
-                        .put("command", event)
-                        .put("parameters", new JSONBuilder()
-                            .put("x", node.getPosition().getX())
-                            .put("y", node.getPosition().getY())
-                            .put("z", node.getPosition().getZ())
-                        ).toString());
     }
 
     /**
